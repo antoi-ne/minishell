@@ -3,4 +3,5 @@
 
 void	msh_engine_execute(char *input)
 {
+	(void)input;
 }

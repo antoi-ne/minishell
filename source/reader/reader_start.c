@@ -18,8 +18,7 @@ void	msh_reader_start(void)
 			add_history(input);
 		
 		sinput = str_trim(input, " \t\n\v\f\r");
-		free(input);
-		printf("line received: [%s]\n", sinput);
+		msh_parser_tokenize(sinput);
 		free (sinput);
 	}
 }
