@@ -18,32 +18,6 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	llst_push(tokens, node);
 }
 
-// void	parser_dquotes(t_llst **tokens, char *input)
-// {
-// 	size_t	i;
-// 	size_t	marker;
-// 	char	*string_token;
-
-// 	i = 0;
-// 	while (input[i])
-// 	{
-// 		if (input[i] == '"')
-// 		{
-// 			marker = i;
-// 			i++;
-// 			while (input[i] && input[i] != '"')
-// 				i++;
-// 			if (input[i] == '\0')
-// 				utils_exit(EXIT_FAILURE, "unclosed string");
-// 			string_token = str_sub(input, marker, i - marker + 1);
-// 			printf("found dqs: [%s]\n", string_token);
-// 			// add_token(tokens, string_token, TT_DQS);
-// 			(void)tokens;
-// 		}
-// 		i++;
-// 	}
-// }
-
 void	print_tokens(t_llst	*tokens)
 {
 	t_llst	*node;
@@ -58,101 +32,59 @@ void	print_tokens(t_llst	*tokens)
 	}
 }
 
-// void	msh_parser_tokenize(char *input)
-// {
-// 	t_llst	*tokens;
-// 	size_t	i;
-// 	size_t	marker;
-// 	char	*token;
+void	msh_parser_tokenize(char *input)
+{
+	size_t	i;
+	size_t	marker;
+	char	*token;
+	t_llst	*tokens;
 
-// 	i = 0;
-// 	while (input[i])
-// 	{
-// 		if (input[i] == '"')
-// 		{
-// 			marker = i;
-// 			while (input[i] && input[i] != '"')
-// 				i++;
-// 			if (input[i] == '\0')
-// 				utils_exit(EXIT_FAILURE, "unclosed string");
-// 			token = str_sub(input, marker, i - marker + 1);
-// 			add_token(&tokens, token, TT_DQS);
-// 		}
-// 		else if (input[i] == '\'')
-// 		{
-// 			marker = i;
-// 			while (input[i] && input[i] != '\'')
-// 				i++;
-// 			if (input[i] == '\0')
-// 				utils_exit(EXIT_FAILURE, "unclosed string");
-// 			token = str_sub(input, marker, i - marker + 1);
-// 			add_token(&tokens, token, TT_SQS);
-// 		}
-// 		else if (input[i] != ' ')
-// 		{
-// 			marker = i;
-// 			while (input[i] && input[i] != ' ')
-// 				i++;
-// 			token = str_sub(input, marker, i - marker + 1);
-// 			add_token(&tokens, token, TT_UKWN);
-// 		}
-// 		i++;
-// 	}
-// 	print_tokens(tokens);
-
-
-	void	msh_parser_tokenize(char *input)
+	i = 0;
+	tokens = NULL;
+	while (input[i])
 	{
-		size_t	i;
-		size_t	marker;
-		char	*token;
-		t_llst	*tokens;
-
-		i = 0;
-		tokens = NULL;
-		while (input[i])
+		if (input[i] == ' ')
 		{
-			if (input[i] == ' ')
-			{
-				token = str_dup(" ");
-				if (token == NULL)
-					utils_exit(EXIT_FAILURE, "memory allocation error");
-				add_token(&tokens, token, TT_SPCE);
+			token = str_dup(" ");
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, "memory allocation error");
+			add_token(&tokens, token, TT_SPCE);
+			i++;
+			while (input[i] && input[i] == ' ')
 				i++;
-			}
-			else if (input[i] == '"')
-			{
-				marker = i;
-				i++;
-				while (input[i] && input[i] !='"')
-					i++;
-				if (input[i] == '\0')
-					utils_exit(EXIT_FAILURE, "unclosed double quote string");
-				token = str_sub(input, marker + 1, i - marker);
-				add_token(&tokens, token, TT_DQS);
-				i++;
-			}
-			else if (input[i] == '\'')
-			{
-				marker = i;
-				i++;
-				while (input[i] && input[i] !='\'')
-					i++;
-				if (input[i] == '\0')
-					utils_exit(EXIT_FAILURE, "unclosed single quote string");
-				token = str_sub(input, marker + 1, i - marker - 1);
-				add_token(&tokens, token, TT_SQS);
-				i++;
-			}
-			else
-			{
-				marker = i;
-				while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'')
-					i++;
-				token = str_sub(input, marker, i - marker - 1);
-				add_token(&tokens, token, TT_WORD);
-			}
 		}
-
-		print_tokens(tokens);
+		else if (input[i] == '"')
+		{
+			marker = i;
+			i++;
+			while (input[i] && input[i] !='"')
+				i++;
+			if (input[i] == '\0')
+				utils_exit(EXIT_FAILURE, "unclosed double quote string");
+			token = str_sub(input, marker + 1, i - marker);
+			add_token(&tokens, token, TT_DQS);
+			i++;
+		}
+		else if (input[i] == '\'')
+		{
+			marker = i;
+			i++;
+			while (input[i] && input[i] !='\'')
+				i++;
+			if (input[i] == '\0')
+				utils_exit(EXIT_FAILURE, "unclosed single quote string");
+			token = str_sub(input, marker + 1, i - marker - 1);
+			add_token(&tokens, token, TT_SQS);
+			i++;
+		}
+		else
+		{
+			marker = i;
+			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'')
+				i++;
+			token = str_sub(input, marker, i - marker - 1);
+			add_token(&tokens, token, TT_WORD);
+		}
 	}
+	print_tokens(tokens);
+}
