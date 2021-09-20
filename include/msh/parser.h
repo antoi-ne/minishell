@@ -1,6 +1,15 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+typedef enum	e_metachar
+{
+	MC_EOS = 0,		// end of string: (/0)
+	MC_NAS = 1,		// not a string
+	MC_SD = 2,		// string delimiter (" or ')
+	MC_SQS = 3,		// single quote string
+	MC_DQS = 4		// double quote string
+}	t_metachar;
+
 typedef enum	e_data_type
 {
 	DT_UNKWN = 0, // unknown (not parsed yet)
@@ -13,13 +22,11 @@ typedef enum	e_data_type
 
 typedef enum	e_token_type
 {
-	TT_UKWN,
-	TT_DQS,
-	TT_SQS,
-	TT_CMD,
-	TT_ARG,
-	TT_PIPE,
-	TT_REDR,
+	TT_UKWN, // unknown, not pased yet
+	TT_SPCE, // space
+	TT_DQS, // double quote string
+	TT_SQS, // single quote string
+	TT_WORD // word (interpretable token)
 }	t_token_type;
 
 typedef struct	s_token
