@@ -61,7 +61,7 @@ void	msh_parser_tokenize(char *input)
 				i++;
 			if (input[i] == '\0')
 				utils_exit(EXIT_FAILURE, "unclosed double quote string");
-			token = str_sub(input, marker + 1, i - marker);
+			token = str_sub(input, marker + 1, i - marker - 1);
 			add_token(&tokens, token, TT_DQS);
 			i++;
 		}
@@ -77,12 +77,23 @@ void	msh_parser_tokenize(char *input)
 			add_token(&tokens, token, TT_SQS);
 			i++;
 		}
+		else if (input[i] == '<' || input[i] == '>')
+		{
+			marker = i;
+			while (input[i] && (input[i] == '<' || input[i] == '>'))
+				i++;
+			if (i - marker > 2)
+				utils_exit(EXIT_FAILURE, "parsing error: invalid redirection token");
+			token = str_sub(input, marker, i - marker);
+			add_token(&tokens, token, TT_RERD);
+		}
 		else
 		{
 			marker = i;
-			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'')
+			i++;
+			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'' && input[i] != '<' && input[i] != '>' && input[i] != '$')
 				i++;
-			token = str_sub(input, marker, i - marker - 1);
+			token = str_sub(input, marker, i - marker);
 			add_token(&tokens, token, TT_WORD);
 		}
 	}

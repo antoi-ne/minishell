@@ -7,7 +7,8 @@ typedef enum	e_token_type
 	TT_SPCE, // space
 	TT_DQS, // double quote string
 	TT_SQS, // single quote string
-	TT_WORD // word (interpretable token)
+	TT_WORD, // word (interpretable token)
+	TT_RERD // redirection
 }	t_token_type;
 
 typedef struct	s_token

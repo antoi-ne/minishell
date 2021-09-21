@@ -19,6 +19,6 @@ void	msh_reader_start(void)
 		
 		sinput = str_trim(input, " \t\n\v\f\r");
 		msh_parser_tokenize(sinput);
-		free (sinput);
+		free(sinput);
 	}
 }
