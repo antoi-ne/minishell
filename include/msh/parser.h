@@ -20,4 +20,6 @@ typedef struct	s_token
 
 void	msh_parser_tokenize(char *input);
 
+void	msh_parser_expand(t_llst **tokens);
+
 #endif

@@ -1,6 +1,6 @@
 #include "msh.h"
 #include "carbon.h"
-#include "stdio.h"
+#include <stdio.h>
 
 void	add_token(t_llst **tokens, char *data, t_token_type type)
 {
@@ -97,5 +97,6 @@ void	msh_parser_tokenize(char *input)
 			add_token(&tokens, token, TT_WORD);
 		}
 	}
+	msh_parser_expand(&tokens);
 	print_tokens(tokens);
 }

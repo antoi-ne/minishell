@@ -5,6 +5,8 @@
 
 # include "msh/utils.h"
 
+# include "msh/env.h"
+
 # include "msh/reader.h"
 
 # include "msh/parser.h"
