@@ -8,7 +8,8 @@ typedef enum	e_token_type
 	TT_DQS, // double quote string
 	TT_SQS, // single quote string
 	TT_WORD, // word (interpretable token)
-	TT_RERD // redirection
+	TT_RERD, // redirection "> >> < <<"
+	TT_PIPE // pipe "|"
 }	t_token_type;
 
 typedef struct	s_token
@@ -17,6 +18,13 @@ typedef struct	s_token
 	t_token_type	type;
 }	t_token;
 
+typedef struct s_prog
+{
+	char	*cmd;
+	char	**argv;
+	int		input;
+	int		output;
+}	t_prog;
 
 void	msh_parser_tokenize(char *input);
 
