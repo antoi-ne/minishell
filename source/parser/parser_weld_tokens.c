@@ -16,8 +16,11 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		token = (t_token *)node->data;
 		n_next = node->next;
 		t_next = (t_token *)n_next->data;
-		if ((token->type == TT_WORD || token->type == TT_DQS || token->type == TT_SQS)
-			&& (t_next->type == TT_WORD || t_next->type == TT_DQS || t_next->type == TT_SQS))
+		if (token->type == TT_DQS || token->type == TT_SQS)
+			token->type = TT_WORD;
+		if (t_next->type == TT_DQS || t_next->type == TT_SQS)
+			t_next->type = TT_WORD;
+		if (token->type == TT_WORD && t_next->type == TT_WORD)
 		{
 			joined = str_join(token->data, t_next->data);
 			if (joined == NULL)
