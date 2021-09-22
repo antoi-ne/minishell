@@ -98,5 +98,6 @@ void	msh_parser_tokenize(char *input)
 		}
 	}
 	msh_parser_expand(&tokens);
+	msh_parser_weld_tokens(&tokens);
 	print_tokens(tokens);
 }
