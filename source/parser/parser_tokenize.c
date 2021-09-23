@@ -18,29 +18,27 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	llst_push(tokens, node);
 }
 
-void	print_tokens(t_llst	*tokens)
-{
-	t_llst	*node;
-	t_token	*token;
+// void	print_tokens(t_llst	*tokens)
+// {
+// 	t_llst	*node;
+// 	t_token	*token;
 
-	node = tokens;
-	while (node != NULL)
-	{
-		token = (t_token *)node->data;
-		printf("(%d) [%s]\n", token->type, token->data);
-		node = node->next;
-	}
-}
+// 	node = tokens;
+// 	while (node != NULL)
+// 	{
+// 		token = (t_token *)node->data;
+// 		printf("(%d) [%s]\n", token->type, token->data);
+// 		node = node->next;
+// 	}
+// }
 
-void	msh_parser_tokenize(char *input)
+void	msh_parser_tokenize(char *input, t_llst **tokens)
 {
 	size_t	i;
 	size_t	marker;
 	char	*token;
-	t_llst	*tokens;
 
 	i = 0;
-	tokens = NULL;
 	while (input[i])
 	{
 		if (input[i] == ' ')
@@ -48,7 +46,7 @@ void	msh_parser_tokenize(char *input)
 			token = str_dup(" ");
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
-			add_token(&tokens, token, TT_SPCE);
+			add_token(tokens, token, TT_SPCE);
 			i++;
 			while (input[i] && input[i] == ' ')
 				i++;
@@ -62,7 +60,7 @@ void	msh_parser_tokenize(char *input)
 			if (input[i] == '\0')
 				utils_exit(EXIT_FAILURE, "unclosed double quote string");
 			token = str_sub(input, marker + 1, i - marker - 1);
-			add_token(&tokens, token, TT_DQS);
+			add_token(tokens, token, TT_DQS);
 			i++;
 		}
 		else if (input[i] == '\'')
@@ -76,7 +74,7 @@ void	msh_parser_tokenize(char *input)
 			token = str_sub(input, marker + 1, i - marker - 1);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
-			add_token(&tokens, token, TT_SQS);
+			add_token(tokens, token, TT_SQS);
 			i++;
 		}
 		else if (input[i] == '<' || input[i] == '>')
@@ -89,7 +87,7 @@ void	msh_parser_tokenize(char *input)
 			token = str_sub(input, marker, i - marker);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
-			add_token(&tokens, token, TT_RERD);
+			add_token(tokens, token, TT_RERD);
 		}
 		else if (input[i] == '|')
 		{
@@ -101,7 +99,7 @@ void	msh_parser_tokenize(char *input)
 			token = str_dup("|");
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
-			add_token(&tokens, token, TT_PIPE);
+			add_token(tokens, token, TT_PIPE);
 		}
 		else
 		{
@@ -112,10 +110,7 @@ void	msh_parser_tokenize(char *input)
 			token = str_sub(input, marker, i - marker);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
-			add_token(&tokens, token, TT_WORD);
+			add_token(tokens, token, TT_WORD);
 		}
 	}
-	msh_parser_expand(&tokens);
-	msh_parser_weld_tokens(&tokens);
-	print_tokens(tokens);
 }

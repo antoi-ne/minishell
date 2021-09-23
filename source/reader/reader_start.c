@@ -9,6 +9,7 @@ void	msh_reader_start(void)
 {
 	char	*input;
 	char	*sinput;
+	t_llst	*progs;
 
 	while (1) {
 		input = readline(MSH_PROMPT);
@@ -18,7 +19,9 @@ void	msh_reader_start(void)
 			add_history(input);
 		
 		sinput = str_trim(input, " \t\n\v\f\r");
-		msh_parser_tokenize(sinput);
+		progs = NULL;
+		msh_parser(sinput, &progs);
+		msh_eng
 		free(sinput);
 	}
 }
