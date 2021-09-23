@@ -33,6 +33,14 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 			free(t_next);
 			free(n_next);
 		}
+		else if (t_next->type == TT_SPCE)
+		{
+			node->next = n_next->next;
+			free(t_next->data);
+			free(t_next);
+			free(n_next);
+			node = node->next;
+		}
 		else
 			node = node->next;
 	}

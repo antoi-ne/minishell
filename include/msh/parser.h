@@ -32,4 +32,6 @@ void	msh_parser_expand(t_llst **tokens);
 
 void	msh_parser_weld_tokens(t_llst **tokens);
 
+void	msh_parser_lexer(t_llst **tokens);
+
 #endif

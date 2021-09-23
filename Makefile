@@ -8,8 +8,6 @@ SRCS		= \
 				$(wildcard source/*.c) \
 				$(wildcard source/*/*.c)
 
-
-
 OBJS		= $(SRCS:.c=.o)
 
 $(NAME):	$(OBJS)
@@ -19,9 +17,11 @@ $(NAME):	$(OBJS)
 all:		$(NAME)
 
 clean:
+			make -C libcarbon clean
 			$(RM) $(OBJS)
 
 fclean:		clean
+			make -C libcarbon fclean
 			$(RM) $(NAME)
 
 re:			fclean all
