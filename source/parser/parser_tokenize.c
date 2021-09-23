@@ -74,6 +74,8 @@ void	msh_parser_tokenize(char *input)
 			if (input[i] == '\0')
 				utils_exit(EXIT_FAILURE, "unclosed single quote string");
 			token = str_sub(input, marker + 1, i - marker - 1);
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, "memory allocation error");
 			add_token(&tokens, token, TT_SQS);
 			i++;
 		}
@@ -85,15 +87,31 @@ void	msh_parser_tokenize(char *input)
 			if (i - marker > 2)
 				utils_exit(EXIT_FAILURE, "parsing error: invalid redirection token");
 			token = str_sub(input, marker, i - marker);
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, "memory allocation error");
 			add_token(&tokens, token, TT_RERD);
+		}
+		else if (input[i] == '|')
+		{
+			marker = i;
+			while (input [i] && input[i] == '|')
+				i ++;
+			if (i - marker > 2)
+				utils_exit(EXIT_FAILURE, "parsing error: multiple trailing pipes");
+			token = str_dup("|");
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, "memory allocation error");
+			add_token(&tokens, token, TT_PIPE);
 		}
 		else
 		{
 			marker = i;
 			i++;
-			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'' && input[i] != '<' && input[i] != '>' && input[i] != '$')
+			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'' && input[i] != '<' && input[i] != '>' && input[i] != '$' && input[i] != '|')
 				i++;
 			token = str_sub(input, marker, i - marker);
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, "memory allocation error");
 			add_token(&tokens, token, TT_WORD);
 		}
 	}

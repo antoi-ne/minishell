@@ -1,4 +1,4 @@
-NAME		= msh
+NAME		= minishell
 
 CC			= clang -O3
 CFLAGS		= -Wall -Wextra -Werror -I libcarbon/include -I include
