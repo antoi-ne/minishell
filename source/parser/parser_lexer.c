@@ -2,6 +2,7 @@
 #include "carbon.h"
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 static t_prog	*init_prog(void)
 {
@@ -107,7 +108,25 @@ void	print_progs(t_llst *progs)
 	}
 }
 
-void	
+void	apply_pipes(t_llst **progs)
+{
+	t_llst	*node;
+	t_prog	*prog;
+	t_prog	*next_prog;
+	int		pipefd[2];
+
+	node = *progs;
+	while (node && node->next)
+	{
+		prog = (t_prog *)node->data;
+		next_prog = (t_prog *)node->next->data;
+		if (pipe(pipefd) < 0)
+			utils_exit(EXIT_FAILURE, "could not create pipe");
+		prog->output = pipefd[1];
+		next_prog->input = pipefd[0];
+		node = node->next;
+	}
+}
 
 void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 {
@@ -145,5 +164,6 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 	if (llst_len(lexer.c_words) < 1)
 		utils_exit(EXIT_FAILURE, "nothing after pipe");
 	finish_prog(&lexer, progs);
+	apply_pipes(progs);
 	// print_progs(*progs);
 }

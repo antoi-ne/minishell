@@ -46,4 +46,8 @@ void	msh_parser_weld_tokens(t_llst **tokens);
 
 void	msh_parser_lexer(t_llst **tokens, t_llst **progs);
 
+
+
+void	print_progs(t_llst *progs);
+
 #endif

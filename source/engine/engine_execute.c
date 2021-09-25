@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <stdio.h>
 
 void	msh_engine_execute(t_llst **progs)
 {
@@ -26,10 +27,16 @@ void	msh_engine_execute(t_llst **progs)
 		{
 			dup2(prog->input, STDIN_FILENO);
 			dup2(prog->output, STDOUT_FILENO);
-			execve(cmd, prog->argv, msh_env_all());
+			exit(execve(cmd, prog->argv, msh_env_all()));
 		}
 		else
+		{
 			waitpid(pid, NULL, 0);
+			if (prog->input > 2)
+				close(prog->input);
+			if (prog->output > 2)
+				close(prog->output);
+		}
 		node = node->next;
 	}
 }
