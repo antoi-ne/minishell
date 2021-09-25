@@ -24,7 +24,7 @@ static char *build_cmd(char *path, char *cmd)
 	return (full_path);
 }
 
-void	msh_check_path(char *cmd)
+char	*msh_check_path(char *cmd)
 {
 	t_env		*env_path;
 	char		**paths;
@@ -34,7 +34,7 @@ void	msh_check_path(char *cmd)
 
 	env_path = msh_env_get("PATH");
 	if (env_path == NULL)
-		return ;
+		return (NULL);
 	paths = str_split(env_path->def, ':');
 	if (paths == NULL)
 		utils_exit(EXIT_FAILURE, "memory allocation error");
@@ -42,8 +42,9 @@ void	msh_check_path(char *cmd)
 	while (paths[i])
 	{
 		path = build_cmd(paths[i], cmd);
-		if (stat(path, &buf) < 0)
-			utils_exit(EXIT_FAILURE, "stat() returned an error");
+		if (stat(path, &buf) == 0)
+			return (path);
 		i++;
 	}
+	return (NULL);
 }

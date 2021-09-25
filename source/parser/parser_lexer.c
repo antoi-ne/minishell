@@ -85,7 +85,7 @@ static void	finish_prog(t_lexer *lexer, t_llst **progs)
 	lexer->c_words = NULL;
 }
 
-static void	print_progs(t_llst *progs)
+void	print_progs(t_llst *progs)
 {
 	t_llst	*node;
 	t_prog	*prog;
@@ -106,6 +106,8 @@ static void	print_progs(t_llst *progs)
 		node = node->next;
 	}
 }
+
+void	
 
 void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 {
@@ -143,5 +145,5 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 	if (llst_len(lexer.c_words) < 1)
 		utils_exit(EXIT_FAILURE, "nothing after pipe");
 	finish_prog(&lexer, progs);
-	print_progs(*progs);
+	// print_progs(*progs);
 }
