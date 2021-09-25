@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <readline/readline.h>
 
 static t_prog	*init_prog(void)
 {
@@ -12,14 +13,37 @@ static t_prog	*init_prog(void)
 	if (prog == NULL)
 		utils_exit(EXIT_FAILURE, "memory allocation error");
 	prog->argv = NULL;
-	prog->input = 0;
-	prog->output = 1;
+	prog->input = STDIN_FILENO;
+	prog->output = STDOUT_FILENO;
 	return (prog);
+}
+
+static int	here_document_redirect(char *delimiter)
+{
+	char	*input;
+	int		pipefd[2];
+
+	if (pipe(pipefd) < 0)
+		utils_exit(EXIT_FAILURE, "pipe() error");
+	while (1)
+	{
+		input = readline("> ");
+		if (input == NULL)
+			utils_exit(EXIT_FAILURE, "here-document readline returned NULL");
+		if (str_cmp(input, delimiter) == 0)
+			break ;
+		write(pipefd[1], input, str_len(input));
+		write(pipefd[1], "\n", 1);
+		free(input);
+	}
+	free(input);
+	close(pipefd[1]);
+	return (pipefd[0]);
 }
 
 static void	parse_redirection(t_lexer *lexer)
 {
-	int fd;
+	int 	fd;
 
 	if (lexer->n_node == NULL || lexer->n_token->type != TT_WORD)
 		utils_exit(EXIT_FAILURE, "parsing error: no token after redirection");
@@ -32,7 +56,7 @@ static void	parse_redirection(t_lexer *lexer)
 	}
 	else if (str_cmp(lexer->c_token->data, "<<") == 0)
 	{
-		utils_exit(EXIT_FAILURE, "redirection type << not implemented yet");
+		lexer->c_prog->input = here_document_redirect(lexer->n_token->data);
 	}
 	else if (str_cmp(lexer->c_token->data, ">") == 0)
 	{
@@ -46,7 +70,7 @@ static void	parse_redirection(t_lexer *lexer)
 		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_APPEND, 0777);
 		if (fd < 0)
 			utils_exit(EXIT_FAILURE, "cannot open file 2");
-		lexer->c_prog->input = fd;
+		lexer->c_prog->output = fd;
 	}
 }
 
