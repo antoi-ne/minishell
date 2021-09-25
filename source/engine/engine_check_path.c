@@ -32,6 +32,13 @@ char	*msh_check_path(char *cmd)
 	char		*path;
 	struct stat	buf;
 
+	if (cmd[0] == '/' || cmd[0] == '.' || cmd[0] == '~')
+	{
+		path = str_dup(cmd);
+		if (path == NULL)
+		utils_exit(EXIT_FAILURE, "memory allocation error");
+		return (path);
+	}
 	env_path = msh_env_get("PATH");
 	if (env_path == NULL)
 		return (NULL);
