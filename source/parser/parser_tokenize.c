@@ -80,7 +80,7 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 		else if (input[i] == '<' || input[i] == '>')
 		{
 			marker = i;
-			while (input[i] && (input[i] == '<' || input[i] == '>'))
+			while (input[i] && (input[i] == input[marker]))
 				i++;
 			if (i - marker > 2)
 				utils_exit(EXIT_FAILURE, "parsing error: invalid redirection token");
