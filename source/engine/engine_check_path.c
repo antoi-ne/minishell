@@ -36,7 +36,7 @@ char	*msh_check_path(char *cmd)
 	{
 		path = str_dup(cmd);
 		if (path == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+			utils_exit(EXIT_FAILURE, "memory allocation error");
 		return (path);
 	}
 	env_path = msh_env_get("PATH");

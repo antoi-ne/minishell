@@ -18,20 +18,6 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	llst_push(tokens, node);
 }
 
-// void	print_tokens(t_llst	*tokens)
-// {
-// 	t_llst	*node;
-// 	t_token	*token;
-
-// 	node = tokens;
-// 	while (node != NULL)
-// 	{
-// 		token = (t_token *)node->data;
-// 		printf("(%d) [%s]\n", token->type, token->data);
-// 		node = node->next;
-// 	}
-// }
-
 void	msh_parser_tokenize(char *input, t_llst **tokens)
 {
 	size_t	i;

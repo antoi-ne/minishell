@@ -44,4 +44,7 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		else
 			node = node->next;
 	}
+	token = (t_token *)node->data;
+	if (token->type == TT_DQS || token->type == TT_SQS)
+		token->type = TT_WORD;
 }
