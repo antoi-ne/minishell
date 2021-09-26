@@ -12,14 +12,17 @@ typedef struct s_env
 
 extern t_llst *g_msh_env;
 
-void msh_env_init(char **envp);
+void	msh_env_init(char **envp);
 
-char **msh_env_all(void);
+char	**msh_env_all(void);
 
-t_env *msh_env_get(char *key);
+t_env	*msh_env_get(char *key);
 
-// TODO: implement
-char **msh_env_set(char *key, char*def);
+void	msh_env_set(char *key, char*def);
+
+int		msh_env_unset(char *key);
+
+void	msh_env_free(t_env *env);
 
 // TODO: remove for production
 void env_print(void);

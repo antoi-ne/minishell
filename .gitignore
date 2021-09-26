@@ -2,3 +2,4 @@
 /minishell
 input
 output
+*.dSYM

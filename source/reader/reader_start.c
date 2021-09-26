@@ -17,7 +17,6 @@ void	msh_reader_start(void)
 			break;
 		if (*input)
 			add_history(input);
-		
 		sinput = str_trim(input, " \t\n\v\f\r");
 		progs = NULL;
 		msh_parser(sinput, &progs);
