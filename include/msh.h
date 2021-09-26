@@ -11,6 +11,8 @@
 
 # include "msh/parser.h"
 
+# include "msh/builtins.h"
+
 # include "msh/engine.h"
 
 #endif
