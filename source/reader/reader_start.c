@@ -5,6 +5,20 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+void	prog_free(t_prog *prog)
+{
+	size_t	i;
+
+	i = 0;
+	while (prog->argv[i])
+	{
+		free(prog->argv[i]);
+		i++;
+	}
+	free(prog->argv);
+	free(prog);
+}
+
 void	msh_reader_start(void)
 {
 	char	*input;
@@ -22,5 +36,7 @@ void	msh_reader_start(void)
 		msh_parser(sinput, &progs);
 		msh_engine_execute(&progs);
 		free(sinput);
+		free(input);
 	}
+	llst_destroyl(&progs, (void (*)(void *)) &prog_free);
 }

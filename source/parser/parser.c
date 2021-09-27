@@ -2,6 +2,12 @@
 #include "carbon.h"
 #include <stdio.h>
 
+void	token_free(t_token *token)
+{
+	free(token->data);
+	free(token);
+}
+
 void	print_tokens(t_llst	*tokens)
 {
 	t_llst	*node;
@@ -26,5 +32,5 @@ void	msh_parser(char *input, t_llst **progs)
 	msh_parser_expand(&tokens);
 	msh_parser_weld_tokens(&tokens);
 	msh_parser_lexer(&tokens, progs);
-	// print_tokens(tokens);
+	llst_destroyl(&tokens, (void (*)(void *)) &token_free);
 }
