@@ -1,6 +1,6 @@
 NAME		= minishell
 
-CC			= clang -O0
+CC			= clang -g
 CFLAGS		= -Wall -Wextra -Werror -I libcarbon/include -I include
 RM			= rm -f
 

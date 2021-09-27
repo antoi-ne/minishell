@@ -5,20 +5,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-void	prog_free(t_prog *prog)
-{
-	size_t	i;
-
-	i = 0;
-	while (prog->argv[i])
-	{
-		free(prog->argv[i]);
-		i++;
-	}
-	free(prog->argv);
-	free(prog);
-}
-
 void	msh_reader_start(void)
 {
 	char	*input;
@@ -35,9 +21,10 @@ void	msh_reader_start(void)
 		progs = NULL;
 		msh_parser(sinput, &progs);
 		msh_engine_execute(&progs);
-		llst_destroyl(&progs, (void (*)(void *)) &prog_free);
+		llst_destroyl(&progs, (void (*)(void *)) &msh_parser_prog_free);
 		free(sinput);
 		free(input);
+		break;
 		// every data sets needed to apply the input line should be freed, the only section of
 		// data that should be keeped between the loop's iterations (the command history) is managed by add_history()
 	}

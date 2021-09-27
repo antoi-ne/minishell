@@ -44,6 +44,7 @@ void	msh_engine_execute(t_llst **progs)
 			else
 			{
 				waitpid(pid, NULL, 0);
+				free(cmd);
 				if (prog->input > 2)
 					close(prog->input);
 				if (prog->output > 2)

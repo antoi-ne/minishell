@@ -106,7 +106,8 @@ static void	finish_prog(t_lexer *lexer, t_llst **progs)
 	if (node == NULL)
 			utils_exit(EXIT_FAILURE, "memory allocation error");
 	llst_push(progs, node);
-	lexer->c_prog = init_prog();
+	lexer->c_prog = NULL;
+	llst_destroyl(&(lexer->c_words), NULL);
 	lexer->c_words = NULL;
 }
 
@@ -160,9 +161,9 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 	lexer.c_words = NULL;
 	lexer.tokens = tokens;
 	lexer.c_node = *tokens;
-	lexer.c_prog = init_prog();
 	while (lexer.c_node)
 	{
+		lexer.c_prog = init_prog();
 		lexer.c_token = (t_token *)lexer.c_node->data;
 		lexer.n_node = lexer.c_node->next;
 		if (lexer.n_node)
@@ -189,5 +190,5 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		utils_exit(EXIT_FAILURE, "nothing after pipe");
 	finish_prog(&lexer, progs);
 	apply_pipes(progs);
-	// print_progs(*progs);
+		// print_progs(*progs);
 }

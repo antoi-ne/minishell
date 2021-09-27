@@ -50,8 +50,13 @@ char	*msh_check_path(char *cmd)
 	{
 		path = build_cmd(paths[i], cmd);
 		if (stat(path, &buf) == 0)
+		{
+			str_split_free(paths);
 			return (path);
+		}
+		free(path);
 		i++;
 	}
+	str_split_free(paths);
 	return (NULL);
 }
