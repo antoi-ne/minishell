@@ -35,8 +35,10 @@ void	msh_reader_start(void)
 		progs = NULL;
 		msh_parser(sinput, &progs);
 		msh_engine_execute(&progs);
+		llst_destroyl(&progs, (void (*)(void *)) &prog_free);
 		free(sinput);
 		free(input);
+		// every data sets needed to apply the input line should be freed, the only section of
+		// data that should be keeped between the loop's iterations (the command history) is managed by add_history()
 	}
-	llst_destroyl(&progs, (void (*)(void *)) &prog_free);
 }

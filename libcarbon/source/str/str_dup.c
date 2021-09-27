@@ -6,7 +6,7 @@
 /*   By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/14 19:05:12 by ancoulon          #+#    #+#             */
-/*   Updated: 2021/03/08 10:28:09 by ancoulon         ###   ########.fr       */
+/*   Updated: 2021/09/27 14:42:15 by ancoulon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*str_dup(char *s)
 {
 	char	*cpy;
 
-	cpy = mem_calloc(str_len(s));
+	cpy = mem_calloc(str_len(s) + 1);
 	str_cpy(cpy, s);
 	return (cpy);
 }
