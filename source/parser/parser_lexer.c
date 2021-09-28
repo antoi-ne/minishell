@@ -161,9 +161,11 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 	lexer.c_words = NULL;
 	lexer.tokens = tokens;
 	lexer.c_node = *tokens;
+	lexer.c_prog = init_prog();
 	while (lexer.c_node)
 	{
-		lexer.c_prog = init_prog();
+		if (lexer.c_prog == NULL)
+			lexer.c_prog = init_prog();
 		lexer.c_token = (t_token *)lexer.c_node->data;
 		lexer.n_node = lexer.c_node->next;
 		if (lexer.n_node)
