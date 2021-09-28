@@ -15,16 +15,19 @@ void	msh_reader_start(void)
 		input = readline(MSH_PROMPT);
 		if (input == NULL)
 			break;
-		if (*input)
-			add_history(input);
+		if (*input == '\0')
+			continue ;
+		add_history(input);
 		sinput = str_trim(input, " \t\n\v\f\r");
+		free(input);
 		progs = NULL;
 		msh_parser(sinput, &progs);
+		free (sinput);
 		msh_engine_execute(&progs);
 		llst_destroyl(&progs, (void (*)(void *)) &msh_parser_prog_free);
-		free(sinput);
-		free(input);
 		// every data sets needed to apply the input line should be freed, the only section of
 		// data that should be keeped between the loop's iterations (the command history) is managed by add_history()
 	}
+	printf("exit\n");
+	rl_clear_history();
 }

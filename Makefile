@@ -1,7 +1,7 @@
 NAME		= minishell
 
-CC			= clang -g
-CFLAGS		= -Wall -Wextra -Werror -I libcarbon/include -I include
+CC			= gcc -g
+CFLAGS		= -Wall -Wextra -Werror -I /Users/ancoulon/.local/include -I libcarbon/include -I include
 RM			= rm -f
 
 SRCS		= \
@@ -12,7 +12,7 @@ OBJS		= $(SRCS:.c=.o)
 
 $(NAME):	$(OBJS)
 			make -C libcarbon
-			$(CC) $(CFLAGS) -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
+			$(CC) $(CFLAGS) -L /Users/ancoulon/.local/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
 
 all:		$(NAME)
 

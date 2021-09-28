@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <stdio.h>
+#include <signal.h>
 
 static void	execute_builtins(t_prog *prog)
 {
@@ -20,6 +21,7 @@ void	msh_engine_execute(t_llst **progs)
 	t_prog	*prog;
 	char	*cmd;
 	pid_t	pid;
+	int		retval;
 
 	node = *progs;
 	while (node)
@@ -37,18 +39,27 @@ void	msh_engine_execute(t_llst **progs)
 				utils_exit(EXIT_FAILURE, "Fork error");
 			else if (pid == 0)
 			{
+				// signal(SIGINT, NULL);
 				dup2(prog->input, STDIN_FILENO);
 				dup2(prog->output, STDOUT_FILENO);
-				exit(execve(cmd, prog->argv, msh_env_all()));
+				retval = execve(cmd, prog->argv, msh_env_all());
+				if (prog->input > 2)
+					close(prog->input);
+				if (prog->output > 2)
+					close(prog->output);
+				exit (retval);
 			}
 			else
 			{
-				waitpid(pid, NULL, 0);
 				free(cmd);
 				if (prog->input > 2)
 					close(prog->input);
 				if (prog->output > 2)
 					close(prog->output);
+				if (node->next == NULL)
+				{
+					waitpid(pid, &retval, 0);
+				}
 			}
 		}
 		node = node->next;

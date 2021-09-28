@@ -6,13 +6,13 @@
 #    By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/14 13:34:53 by ancoulon          #+#    #+#              #
-#    Updated: 2021/09/15 12:53:22 by ancoulon         ###   ########.fr        #
+#    Updated: 2021/09/28 14:17:28 by ancoulon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= libcarbon.a
 
-CC			= clang -g
+CC			= gcc -g
 AR			= ar rc
 RM			= rm -f
 CFLAGS		= -Wall -Wextra -Werror -I./include

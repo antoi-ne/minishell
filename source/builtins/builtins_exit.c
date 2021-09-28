@@ -2,10 +2,12 @@
 #include "carbon.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <readline/readline.h>
 
 int		msh_builtins_exit(t_prog *prog)
 {
 	(void)prog;
-	printf("gonna exit real quick\n");
+	printf("exit\n");
+	rl_clear_history();
 	exit(EXIT_SUCCESS);
 }

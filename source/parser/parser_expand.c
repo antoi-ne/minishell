@@ -51,8 +51,10 @@ static char	*expand_dqs(char *str)
 			start = i;
 			i++;
 			while (str[i] && str[i] != ' ' && str[i] != '$')
-			{
 				i++;
+			if (i < 1)
+			{
+				break ;
 			}
 			vn = str_sub(str, start + 1, i - start - 1);
 			var = msh_env_get(vn);
@@ -87,6 +89,11 @@ void	msh_parser_expand(t_llst **tokens)
 		token = (t_token *)node->data;
 		if (token->type == TT_WORD && token->data[0] == '$')
 		{
+			if (token->data[1] == '\0')
+			{
+				if (node->next == NULL || (((t_token *)node->next->data)->type != TT_DQS && ((t_token *)node->next->data)->type != TT_SQS))
+					break ;
+			}
 			var = msh_env_get(token->data + 1);
 			if (var == NULL)
 				expanded = str_dup("");
