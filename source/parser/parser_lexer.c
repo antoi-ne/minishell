@@ -55,9 +55,7 @@ static void	parse_redirection(t_lexer *lexer)
 		lexer->c_prog->input = fd;
 	}
 	else if (str_cmp(lexer->c_token->data, "<<") == 0)
-	{
 		lexer->c_prog->input = here_document_redirect(lexer->n_token->data);
-	}
 	else if (str_cmp(lexer->c_token->data, ">") == 0)
 	{
 		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_TRUNC, 0777);
@@ -147,8 +145,14 @@ void	apply_pipes(t_llst **progs)
 		next_prog = (t_prog *)node->next->data;
 		if (pipe(pipefd) < 0)
 			utils_exit(EXIT_FAILURE, "could not create pipe");
-		prog->output = pipefd[1];
-		next_prog->input = pipefd[0];
+		if (prog->output == STDOUT_FILENO)
+			prog->output = pipefd[1];
+		else
+			close(pipefd[1]);
+		if (next_prog->input == STDIN_FILENO)
+			next_prog->input = pipefd[0];
+		else
+			close(pipefd[0]);
 		node = node->next;
 	}
 }
@@ -192,5 +196,4 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		utils_exit(EXIT_FAILURE, "nothing after pipe");
 	finish_prog(&lexer, progs);
 	apply_pipes(progs);
-		// print_progs(*progs);
 }
