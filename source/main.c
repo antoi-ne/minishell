@@ -26,7 +26,6 @@ int main(int argc, char **argv, char **envp)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	msh_env_init(envp);
-	msh_env_set("gaming", "yes");
 	msh_reader_start();
 	exit(EXIT_SUCCESS);
 }
