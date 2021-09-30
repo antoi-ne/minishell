@@ -36,11 +36,7 @@ static void	execute_all_progs(t_llst **progs)
 	{
 		prog = (t_prog *)node->data;
 		if (msh_builtins_get(prog->argv[0]))
-		{
-			write(1, "ici\n", 4);
 			msh_builtins_get(prog->argv[0])(prog);
-//			execute_builtins(prog);
-		}
 		else
 		{
 			cmd = msh_check_path(prog->argv[0]);
