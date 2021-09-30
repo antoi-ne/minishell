@@ -24,7 +24,8 @@ int	msh_builtins_cd(t_prog *prog)
 	i = 0;
 	if (!prog->argv[1])
 	{
-		if ((home = msh_env_get("HOME")))
+		home = msh_env_get("HOME");
+		if (home)
 			i = chdir(home->def);
 		else
 			write(1, "bash: cd: HOME not set\n", 23);

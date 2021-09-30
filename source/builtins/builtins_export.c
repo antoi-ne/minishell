@@ -23,7 +23,7 @@ static t_env	*find_first(void)
 	return (first);
 }
 
-static void	print_env_data(t_prog pr, t_env *data)
+static void	print_env_data(t_env *data)
 {
 	write(1, "declare -x ", 11);
 	write(1, data->key, str_len(data->key));
@@ -36,20 +36,20 @@ static void	print_env_data(t_prog pr, t_env *data)
 	write(1, "\n", 1);
 }
 
-static void	export_no_val(t_prog pr, int min_val, t_llst *l)
+static void	export_no_val(int min_val, t_llst *l)
 {
 	t_env	*min;
 	t_env	*tmp;
 
 	min = find_first();
 	tmp = min;
-	print_env_data(pr, tmp);
+	print_env_data(tmp);
 	while (1)
 	{
 		while (l)
 		{
 			if (str_cmp(((t_env *)l->data)->key, min->key) > 0 && (min_val < 0
-						|| str_cmp(((t_env *)l->data)->key, tmp->key) < 0))
+					|| str_cmp(((t_env *)l->data)->key, tmp->key) < 0))
 			{
 				tmp = l->data;
 				min_val = 0;
@@ -58,27 +58,51 @@ static void	export_no_val(t_prog pr, int min_val, t_llst *l)
 		}
 		if (min_val == -1)
 			return ;
-		print_env_data(pr, tmp);
+		print_env_data(tmp);
 		min_val = -1;
 		min = tmp;
-		l = g_msh_env;
+		l = *msh_env_var();
 	}
+}
+
+static t_env	*extract_data(char *str)
+{
+	t_env	*entry;
+	int		i;
+
+	entry = mem_calloc(sizeof(t_env));
+	if (!entry)
+		utils_exit(EXIT_FAILURE, "memory allocation error");
+	return (entry);
+	while (str[i] != '=')
+		i++;
+	entry->key = str_sub(str, 0, i);
+	if (!entry->key)
+		utils_exit(EXIT_FAILURE, "memory allocation error");
+	entry->def = str_sub(str, i + 1, str_len(str));
+	if (!entry->def)
+		utils_exit(EXIT_FAILURE, "memory allocation error");
+	return (entry);
 }
 
 int	msh_builtins_export(t_prog *prog)
 {
 	int		i;
 	t_env	*entry;
+	t_llst	*l;
 
+	l = *msh_env_var();
 	if (!prog->argv[1])
-		export_no_val(*prog, -1, g_msh_env);
+		export_no_val(-1, l);
 	else
 	{
 		i = 1;
 		while (prog->argv[i])
 		{
-			entry = extract_data(pr.argv[i]);
-			msh_env_set(entry);
+			entry = extract_data(prog->argv[i]);
+			msh_env_set(entry->key, entry->def);
+			free(entry->key);
+			free(entry->def);
 			i++;
 		}
 	}

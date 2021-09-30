@@ -17,7 +17,7 @@ static int	is_option(char *str)
 	return (1);
 }
 
-int		msh_builtins_echo(t_prog *prog)
+int	msh_builtins_echo(t_prog *prog)
 {
 	int		i;
 	int		opt;
@@ -40,4 +40,3 @@ int		msh_builtins_echo(t_prog *prog)
 		write(1, "\n", 1);
 	return (0);
 }
-

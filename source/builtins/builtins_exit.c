@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
-int		msh_builtins_exit(t_prog *prog)
+int	msh_builtins_exit(t_prog *prog)
 {
 	(void)prog;
 	printf("exit\n");
