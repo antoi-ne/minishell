@@ -39,14 +39,14 @@ void	msh_engine_execute(t_llst **progs)
 				utils_exit(EXIT_FAILURE, "Fork error");
 			else if (pid == 0)
 			{
-				// signal(SIGINT, NULL);
+				signal(SIGINT, SIG_DFL);
 				dup2(prog->input, STDIN_FILENO);
 				dup2(prog->output, STDOUT_FILENO);
-				retval = execve(cmd, prog->argv, msh_env_all());
 				if (prog->input > 2)
 					close(prog->input);
 				if (prog->output > 2)
 					close(prog->output);
+				retval = execve(cmd, prog->argv, msh_env_all());
 				exit (retval);
 			}
 			else

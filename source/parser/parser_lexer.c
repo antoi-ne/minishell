@@ -4,6 +4,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <readline/readline.h>
+#include <signal.h>
+#include <stdlib.h>
 
 static t_prog	*init_prog(void)
 {
@@ -22,22 +24,34 @@ static int	here_document_redirect(char *delimiter)
 {
 	char	*input;
 	int		pipefd[2];
+	pid_t	pid;
 
 	if (pipe(pipefd) < 0)
-		utils_exit(EXIT_FAILURE, "pipe() error");
-	while (1)
+		utils_exit(EXIT_FAILURE, "pipe error");
+	pid = fork();
+	if (pid < 0)
+		utils_exit(EXIT_FAILURE, "fork error");
+	else if (pid == 0)
 	{
-		input = readline("> ");
-		if (input == NULL)
-			utils_exit(EXIT_FAILURE, "here-document readline returned NULL");
-		if (str_cmp(input, delimiter) == 0)
-			break ;
-		write(pipefd[1], input, str_len(input));
-		write(pipefd[1], "\n", 1);
+		while (1)
+		{
+			signal(SIGINT, SIG_DFL);
+			input = readline("> ");
+			if (input == NULL || str_cmp(input, delimiter) == 0)
+				break ;
+			write(pipefd[1], input, str_len(input));
+			write(pipefd[1], "\n", 1);
+			free(input);
+		}
 		free(input);
+		close(pipefd[1]);
+		exit(EXIT_SUCCESS);
 	}
-	free(input);
-	close(pipefd[1]);
+	else
+	{
+		waitpid(pid, NULL, 0);
+		close(pipefd[1]);
+	}
 	return (pipefd[0]);
 }
 
