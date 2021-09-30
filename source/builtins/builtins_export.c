@@ -3,21 +3,16 @@
 static t_env	*find_first(void)
 {
 	t_env	*first;
-	int		min_val;
 	int		val;
 	t_llst	*l;
 
 	l = *msh_env_var();
 	first = l->data;
-	min_val = str_cmp(first->key, NULL);
 	while (l)
 	{
-		val = str_cmp(((t_env *)l->data)->key, NULL);
-		if (val < min_val)
-		{
-			min_val = val;
+		val = str_cmp(((t_env *)l->data)->key, first->key);
+		if (val < 0)
 			first = l->data;
-		}
 		l = l->next;
 	}
 	return (first);
