@@ -31,7 +31,7 @@ void	msh_env_set(char *key, char *def)
 		node = llst_new(env);
 		if (node == NULL)
 			utils_exit(EXIT_FAILURE, "memory allocation error");
-		llst_push(&g_msh_env, node);
+		llst_push(msh_env_var(), node);
 	}
 	else
 	{

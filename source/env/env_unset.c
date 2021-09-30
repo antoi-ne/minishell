@@ -9,7 +9,7 @@ int	msh_env_unset(char *key)
 	t_llst	*prev;
 	t_env	*env;
 
-	node = g_msh_env;
+	node = *msh_env_var();
 	prev = NULL;
 	while (node)
 	{

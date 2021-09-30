@@ -10,8 +10,6 @@ typedef struct s_env
 	char *def;
 } t_env;
 
-extern t_llst *g_msh_env;
-
 void	msh_env_init(char **envp);
 
 char	**msh_env_all(void);
