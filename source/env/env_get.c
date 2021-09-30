@@ -8,7 +8,7 @@ t_env	*msh_env_get(char *key)
 	t_llst	*tmp;
 	t_env	*data;
 
-	tmp = g_msh_env;
+	tmp = *msh_env_var();
 	while (tmp)
 	{
 		data = tmp->data;

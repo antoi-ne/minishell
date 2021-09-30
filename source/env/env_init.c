@@ -21,7 +21,7 @@ void	msh_env_init(char **envp)
 	t_env	*entry;
 	t_llst	*node;
 
-	g_msh_env = NULL;
+
 	i = 0;
 	while (envp[i])
 	{
@@ -38,19 +38,19 @@ void	msh_env_init(char **envp)
 		node = llst_new(entry);
 		if (!node)
 			utils_exit(EXIT_FAILURE, "memory allocation error");
-		llst_push(&g_msh_env, node);
+		llst_push(msh_env_var(), node);
 		i++;
 	}
 }
 
-void	env_print(void)
-{
-	t_llst	*node;
+// void	env_print(void)
+// {
+// 	t_llst	*node;
 
-	node = g_msh_env;
-	while (node)
-	{
-		printf("%s = %s\n", ((t_env *)node->data)->key, ((t_env *)node->data)->def);
-		node = node->next;
-	}
-}
+// 	node = g_msh_env;
+// 	while (node)
+// 	{
+// 		printf("%s = %s\n", ((t_env *)node->data)->key, ((t_env *)node->data)->def);
+// 		node = node->next;
+// 	}
+// }

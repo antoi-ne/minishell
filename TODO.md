@@ -1,12 +1,11 @@
 # TODO
 
-- update execution method: piped commands must be started concurently, and only the return value of the last command must be sent to $? (https://unix.stackexchange.com/questions/194544/are-commands-in-a-pipeline-run-simultaneously/194551)
-- builtins
-- signals (including signals for here-document (<<) redirection)
+- update execution method: piped commands must be started concurently, and only the return value of the last command must be sent to $? (https://unix.stackexchange.com/questions/194544/are-commands-in-a-pipeline-run-simultaneously/194551) (**ancoulon**)
+- builtins (**alpeliss**)
 - errors management (mostly parsing errors)
 - return values from builtins & binaries ($?)
 - updating necessary environement variables ($_, $SHLVL)
-- leaks
+- leaks (already checked, should be good)
 - norm
 
 # known edge-cases/bugs

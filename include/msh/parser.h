@@ -36,7 +36,7 @@ typedef struct s_lexer
 	t_llst	*c_words;
 }	t_lexer;
 
-void	msh_parser(char *input, t_llst **progs);
+int		msh_parser(char *input, t_llst **progs);
 
 void	msh_parser_tokenize(char *input, t_llst **tokens);
 
@@ -44,7 +44,7 @@ void	msh_parser_expand(t_llst **tokens);
 
 void	msh_parser_weld_tokens(t_llst **tokens);
 
-void	msh_parser_lexer(t_llst **tokens, t_llst **progs);
+int		msh_parser_lexer(t_llst **tokens, t_llst **progs);
 
 void	msh_parser_prog_free(t_prog *prog);
 

@@ -25,6 +25,7 @@ static int	here_document_redirect(char *delimiter)
 	char	*input;
 	int		pipefd[2];
 	pid_t	pid;
+	int		retval;
 
 	if (pipe(pipefd) < 0)
 		utils_exit(EXIT_FAILURE, "pipe error");
@@ -45,17 +46,23 @@ static int	here_document_redirect(char *delimiter)
 		}
 		free(input);
 		close(pipefd[1]);
+		close(pipefd[0]);
 		exit(EXIT_SUCCESS);
 	}
 	else
 	{
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &retval, 0);
 		close(pipefd[1]);
+		if (retval != EXIT_SUCCESS)
+		{
+			close(pipefd[0]);
+			return (-1);
+		}
 	}
 	return (pipefd[0]);
 }
 
-static void	parse_redirection(t_lexer *lexer)
+static int	parse_redirection(t_lexer *lexer)
 {
 	int 	fd;
 
@@ -68,8 +75,12 @@ static void	parse_redirection(t_lexer *lexer)
 			utils_exit(EXIT_FAILURE, "cannot open file");
 		lexer->c_prog->input = fd;
 	}
-	else if (str_cmp(lexer->c_token->data, "<<") == 0)
+	else if (str_cmp(lexer->c_token->data, "<<") == 0) 
+	{
 		lexer->c_prog->input = here_document_redirect(lexer->n_token->data);
+		if (lexer->c_prog->input == -1)
+			return (-1);
+	}
 	else if (str_cmp(lexer->c_token->data, ">") == 0)
 	{
 		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_TRUNC, 0777);
@@ -84,6 +95,7 @@ static void	parse_redirection(t_lexer *lexer)
 			utils_exit(EXIT_FAILURE, "cannot open file 2");
 		lexer->c_prog->output = fd;
 	}
+	return (0);
 }
 
 static char	**generate_argv(t_lexer *lexer)
@@ -171,7 +183,7 @@ void	apply_pipes(t_llst **progs)
 	}
 }
 
-void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
+int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 {
 	t_lexer	lexer;
 	t_llst	*copy;
@@ -199,7 +211,8 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		}
 		else if (lexer.c_token->type == TT_RERD)
 		{
-			parse_redirection(&lexer);
+			if (parse_redirection(&lexer) == -1)
+				return (-1);
 			lexer.c_node = lexer.c_node->next;
 		}
 		else if (lexer.c_token->type == TT_PIPE)
@@ -210,4 +223,5 @@ void	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		utils_exit(EXIT_FAILURE, "nothing after pipe");
 	finish_prog(&lexer, progs);
 	apply_pipes(progs);
+	return (0);
 }

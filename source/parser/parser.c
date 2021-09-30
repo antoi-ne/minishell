@@ -37,7 +37,7 @@ void	print_tokens(t_llst	*tokens)
 	}
 }
 
-void	msh_parser(char *input, t_llst **progs)
+int	msh_parser(char *input, t_llst **progs)
 {
 	t_llst	*tokens;
 
@@ -46,6 +46,8 @@ void	msh_parser(char *input, t_llst **progs)
 	msh_parser_tokenize(input, &tokens);
 	msh_parser_expand(&tokens);
 	msh_parser_weld_tokens(&tokens);
-	msh_parser_lexer(&tokens, progs);
+	if (msh_parser_lexer(&tokens, progs) == -1)
+		return (-1);
 	llst_destroyl(&tokens, (void (*)(void *)) &msh_parser_token_free);
+	return (0);
 }

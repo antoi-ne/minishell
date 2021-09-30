@@ -19,7 +19,7 @@ int	msh_env_unset(char *key)
 			if (prev)
 				prev->next = node->next;
 			else
-				g_msh_env = node->next;
+				*msh_env_var() = node->next;
 			llst_destroy(node, (void (*)(void *)) &msh_env_free);
 			return (0);
 		}

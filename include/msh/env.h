@@ -24,6 +24,8 @@ int		msh_env_unset(char *key);
 
 void	msh_env_free(t_env *env);
 
+t_llst	**msh_env_var(void);
+
 // TODO: remove for production
 void env_print(void);
 

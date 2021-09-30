@@ -7,7 +7,15 @@
 #include <stdio.h>
 #include <signal.h>
 
-static void	execute_builtins(t_prog *prog)
+static void	prog_close_fds(t_prog *prog)
+{
+	if (prog->input != STDIN_FILENO)
+		close(prog->input);
+	if (prog->output != STDOUT_FILENO)
+		close(prog->output);
+}
+
+static void	execute_builtin_nofork(t_prog *prog)
 {
 	int		(*def)(t_prog *prog);
 
@@ -15,7 +23,7 @@ static void	execute_builtins(t_prog *prog)
 	def(prog);
 }
 
-void	msh_engine_execute(t_llst **progs)
+static void	execute_all_progs(t_llst **progs)
 {
 	t_llst	*node;
 	t_prog	*prog;
@@ -28,7 +36,8 @@ void	msh_engine_execute(t_llst **progs)
 	{
 		prog = (t_prog *)node->data;
 		if (msh_builtins_get(prog->argv[0]))
-			execute_builtins(prog);
+			// execute_builtins(prog);
+			printf("test\n");
 		else
 		{
 			cmd = msh_check_path(prog->argv[0]);
@@ -39,29 +48,30 @@ void	msh_engine_execute(t_llst **progs)
 				utils_exit(EXIT_FAILURE, "Fork error");
 			else if (pid == 0)
 			{
-				signal(SIGINT, SIG_DFL);
 				dup2(prog->input, STDIN_FILENO);
 				dup2(prog->output, STDOUT_FILENO);
-				if (prog->input > 2)
-					close(prog->input);
-				if (prog->output > 2)
-					close(prog->output);
+				prog_close_fds(prog);
 				retval = execve(cmd, prog->argv, msh_env_all());
 				exit (retval);
 			}
 			else
 			{
 				free(cmd);
-				if (prog->input > 2)
-					close(prog->input);
-				if (prog->output > 2)
-					close(prog->output);
+				prog_close_fds(prog);
 				if (node->next == NULL)
-				{
 					waitpid(pid, &retval, 0);
-				}
 			}
 		}
 		node = node->next;
 	}
+}
+
+void	msh_engine_execute(t_llst **progs)
+{
+	if (llst_len(*progs) == 1 && str_cmp(((t_prog *)(*progs)->data)->argv[0], "exit") == 0)
+	{
+		execute_builtin_nofork((t_prog *)(*progs)->data);
+		return ;
+	}
+	execute_all_progs(progs);
 }

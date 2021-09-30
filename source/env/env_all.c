@@ -11,12 +11,12 @@ char **msh_env_all(void)
 	size_t	i;
 	t_llst	*node;
 
-	len = llst_len(g_msh_env);
+	len = llst_len(*msh_env_var());
 	envp = mem_calloc(sizeof(char *) * (len + 1));
 	if (!envp)
 		utils_exit(EXIT_FAILURE, "memory allocation error");
 	i = 0;
-	node = g_msh_env;
+	node = *msh_env_var();
 	while (i < len)
 	{
 		envp[i] = mem_calloc(str_len(((t_env *)node->data)->key) +

@@ -24,7 +24,12 @@ void	msh_reader_start(void)
 		sinput = str_trim(input, " \t\n\v\f\r");
 		free(input);
 		progs = NULL;
-		msh_parser(sinput, &progs);
+		if (msh_parser(sinput, &progs) == -1)
+		{
+			free (sinput);
+			continue ; // leak here (when ctrl-c while here-document)
+			           // because parsing is stopped before finishing and not cleared properly
+		}
 		free (sinput);
 		msh_engine_execute(&progs);
 		llst_destroyl(&progs, (void (*)(void *)) &msh_parser_prog_free);
