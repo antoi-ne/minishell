@@ -6,7 +6,7 @@
 #    By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/14 13:34:53 by ancoulon          #+#    #+#              #
-#    Updated: 2021/09/28 14:17:28 by ancoulon         ###   ########.fr        #
+#    Updated: 2021/10/01 15:58:39 by ancoulon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,7 @@ SRCS		= \
 				source/str/str_sub.c \
 				source/str/str_trim.c \
 				source/types/types_str2int.c \
+				source/types/types_int2str.c
 
 OBJS		= $(SRCS:.c=.o)
 

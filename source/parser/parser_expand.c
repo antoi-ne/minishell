@@ -94,11 +94,16 @@ void	msh_parser_expand(t_llst **tokens)
 				if (node->next == NULL || (((t_token *)node->next->data)->type != TT_DQS && ((t_token *)node->next->data)->type != TT_SQS))
 					break ;
 			}
-			var = msh_env_get(token->data + 1);
-			if (var == NULL)
-				expanded = str_dup("");
+			if (str_cmp(token->data + 1, "?") == 0)
+				expanded = types_int2str(msh_parser_get_retval());
 			else
-				expanded = str_dup(var->def);
+			{
+				var = msh_env_get(token->data + 1);
+				if (var == NULL)
+					expanded = str_dup("");
+				else
+					expanded = str_dup(var->def);
+			}
 			if (expanded == NULL)
 				utils_exit(EXIT_FAILURE, "memory allocation error");
 			free(token->data);

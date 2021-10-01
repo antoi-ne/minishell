@@ -36,7 +36,28 @@ static void	execute_all_progs(t_llst **progs)
 	{
 		prog = (t_prog *)node->data;
 		if (msh_builtins_get(prog->argv[0]))
-			msh_builtins_get(prog->argv[0])(prog);
+		{
+			pid = fork();
+			if (pid < 0)
+				utils_exit(EXIT_FAILURE, "Fork error");
+			else if (pid == 0)
+			{
+				dup2(prog->input, STDIN_FILENO);
+				dup2(prog->output, STDOUT_FILENO);
+				prog_close_fds(prog);
+				retval = msh_builtins_get(prog->argv[0])(prog);
+				exit (retval);
+			}
+			else
+			{
+				prog_close_fds(prog);
+				if (node->next == NULL)
+				{
+					waitpid(pid, &retval, 0);
+					msh_parser_set_retval(retval);
+				}
+			}
+		}
 		else
 		{
 			cmd = msh_check_path(prog->argv[0]);
@@ -58,7 +79,10 @@ static void	execute_all_progs(t_llst **progs)
 				free(cmd);
 				prog_close_fds(prog);
 				if (node->next == NULL)
+				{
 					waitpid(pid, &retval, 0);
+					msh_parser_set_retval(retval);
+				}
 			}
 		}
 		node = node->next;

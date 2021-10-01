@@ -50,6 +50,10 @@ void	msh_parser_prog_free(t_prog *prog);
 
 void	msh_parser_token_free(t_token *token);
 
+void	msh_parser_set_retval(int retval);
+
+int	msh_parser_get_retval(void);
+
 void	print_progs(t_llst *progs);
 
 #endif

@@ -34,9 +34,9 @@ static int	here_document_redirect(char *delimiter)
 		utils_exit(EXIT_FAILURE, "fork error");
 	else if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		while (1)
 		{
-			signal(SIGINT, SIG_DFL);
 			input = readline("> ");
 			if (input == NULL || str_cmp(input, delimiter) == 0)
 				break ;
