@@ -36,6 +36,12 @@ typedef struct s_lexer
 	t_llst	*c_words;
 }	t_lexer;
 
+typedef union	u_bytearray
+{
+	int		integer;
+	char	byte[4];
+}	t_bytearray;
+
 int		msh_parser(char *input, t_llst **progs);
 
 void	msh_parser_tokenize(char *input, t_llst **tokens);
