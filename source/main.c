@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <readline/readline.h>
+#include <errno.h>
 
 int	g_started_child = 0;
 
