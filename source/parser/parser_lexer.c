@@ -20,7 +20,7 @@ static t_prog	*init_prog(void)
 	return (prog);
 }
 
-static int	here_document_redirect(char *delimiter)
+static int	here_document_redirect(t_token *delimiter)
 {
 	char	*input;
 	int		pipefd[2];
@@ -38,8 +38,10 @@ static int	here_document_redirect(char *delimiter)
 		while (1)
 		{
 			input = readline("> ");
-			if (input == NULL || str_cmp(input, delimiter) == 0)
+			if (input == NULL || str_cmp(input, delimiter->data) == 0)
 				break ;
+			if (delimiter->is_string == 0)
+				input = msh_parser_expand_dqs(input);
 			write(pipefd[1], input, str_len(input));
 			write(pipefd[1], "\n", 1);
 			free(input);
@@ -77,7 +79,7 @@ static int	parse_redirection(t_lexer *lexer)
 	}
 	else if (str_cmp(lexer->c_token->data, "<<") == 0) 
 	{
-		lexer->c_prog->input = here_document_redirect(lexer->n_token->data);
+		lexer->c_prog->input = here_document_redirect(lexer->n_token);
 		if (lexer->c_prog->input == -1)
 			return (-1);
 	}

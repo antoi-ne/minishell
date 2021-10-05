@@ -34,7 +34,7 @@ static char	*dqs_newstr(char *str, char *expanded, size_t start, size_t end)
 	return (new);
 }
 
-static char	*expand_dqs(char *str)
+char	*msh_parser_expand_dqs(char *str)
 {
 	size_t	i;
 	size_t	start;
@@ -52,10 +52,8 @@ static char	*expand_dqs(char *str)
 			i++;
 			while (str[i] && str[i] != ' ' && str[i] != '$')
 				i++;
-			if (i < 1)
-			{
-				break ;
-			}
+			if (i - start < 2)
+				continue ;
 			vn = str_sub(str, start + 1, i - start - 1);
 			var = msh_env_get(vn);
 			free(vn);
@@ -92,9 +90,11 @@ void	msh_parser_expand(t_llst **tokens)
 			if (token->data[1] == '\0')
 			{
 				if (node->next == NULL || (((t_token *)node->next->data)->type != TT_DQS && ((t_token *)node->next->data)->type != TT_SQS))
-					break ;
+					expanded = str_dup("$");
+				else
+					expanded = str_dup("");
 			}
-			if (str_cmp(token->data + 1, "?") == 0)
+			else if (str_cmp(token->data + 1, "?") == 0)
 				expanded = types_int2str(msh_parser_get_retval());
 			else
 			{
@@ -111,7 +111,7 @@ void	msh_parser_expand(t_llst **tokens)
 		}
 		else if (token->type == TT_DQS)
 		{
-			expanded = expand_dqs(token->data);
+			expanded = msh_parser_expand_dqs(token->data);
 			token->data = expanded;
 		}
 		node = node->next;

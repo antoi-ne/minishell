@@ -16,6 +16,7 @@ typedef struct	s_token
 {
 	char			*data;
 	t_token_type	type;
+	int				is_string; //only used for heredoc
 }	t_token;
 
 typedef struct s_prog
@@ -61,5 +62,7 @@ void	msh_parser_set_retval(int retval);
 int	msh_parser_get_retval(void);
 
 void	print_progs(t_llst *progs);
+
+char	*msh_parser_expand_dqs(char *str);
 
 #endif

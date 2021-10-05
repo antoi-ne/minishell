@@ -15,6 +15,9 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	node = llst_new(token);
 	if (node == NULL)
 		utils_exit(EXIT_FAILURE, NULL);
+	token->is_string = 0;
+	if (type == TT_DQS || type == TT_SQS)
+		token->is_string = 1;
 	llst_push(tokens, node);
 }
 
@@ -33,6 +36,8 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, NULL);
 			add_token(tokens, token, TT_SPCE);
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, NULL);
 			i++;
 			while (input[i] && input[i] == ' ')
 				i++;
@@ -46,6 +51,8 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			if (input[i] == '\0')
 				utils_exit(EXIT_FAILURE, "unclosed double quote string");
 			token = str_sub(input, marker + 1, i - marker - 1);
+			if (token == NULL)
+				utils_exit(EXIT_FAILURE, NULL);
 			add_token(tokens, token, TT_DQS);
 			i++;
 		}
