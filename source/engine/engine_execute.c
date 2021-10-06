@@ -65,7 +65,8 @@ static void	execute_all_progs(t_llst **progs)
 			cmd = msh_check_path(prog->argv[0]);
 			if (cmd == NULL)
 			{
-				utils_printerror(cmd, "command not found");
+				utils_printerror(prog->argv[0], "command not found");
+				prog_close_fds(prog);
 				node = node->next;
 				continue;
 			}
