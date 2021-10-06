@@ -74,7 +74,7 @@ static void	execute_all_progs(t_llst **progs)
 				utils_exit(EXIT_FAILURE, NULL);
 			else if (pid == 0)
 			{
-				if (dup2(prog->input, STDIN_FILENO) == 0)
+				if (dup2(prog->input, STDIN_FILENO) < 0)
 					exit(EXIT_FAILURE);
 				if (dup2(prog->output, STDOUT_FILENO) < 0)
 					exit(EXIT_FAILURE);
