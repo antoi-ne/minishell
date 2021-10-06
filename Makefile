@@ -1,24 +1,32 @@
 NAME		= minishell
 
 CC			= gcc -g
-CFLAGS		= -Wall -Wextra -Werror -I /Users/ancoulon/.local/include -I libcarbon/include -I include
+CFLAGS		= -Wall -Wextra -Werror -I /Users/maperrea/.brew/opt/readline/include -I libcarbon/include -I include
 RM			= rm -f
 
+SRCDIR		= source
 SRCS		= \
-				$(wildcard source/*.c) \
-				$(wildcard source/*/*.c)
+				$(wildcard $(SRCDIR)/*.c) \
+				$(wildcard $(SRCDIR)/*/*.c)
 
-OBJS		= $(SRCS:.c=.o)
+OBJDIR		= object
+OBJS		= $(subst $(SRCDIR), $(OBJDIR), $(SRCS:.c=.o))
 
-$(NAME):	$(OBJS)
-			make -C libcarbon
-			$(CC) $(CFLAGS) -L /Users/ancoulon/.local/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+				$(CC) -O3 $(CFLAGS) -c $^ -o $@
 
 all:		$(NAME)
 
+$(OBJDIR):
+			mkdir $(OBJDIR) $(subst $(SRCDIR), $(OBJDIR), $(shell find $(SRCDIR)/*/ -type d))
+
+$(NAME):	$(OBJDIR) $(OBJS)
+			make -C libcarbon
+			$(CC) $(CFLAGS) -L /Users/maperrea/.brew/opt/readline/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
+
 clean:
 			make -C libcarbon clean
-			$(RM) $(OBJS)
+			$(RM) -r $(OBJDIR)
 
 fclean:		clean
 			make -C libcarbon fclean
