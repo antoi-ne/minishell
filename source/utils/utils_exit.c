@@ -5,7 +5,7 @@
 
 int	utils_exit(int ec, char *err_msg)
 {
-		if (ec != EXIT_SUCCESS)
+	if (ec != EXIT_SUCCESS)
 	{
 		if (err_msg == NULL)
 			perror("msh");

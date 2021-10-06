@@ -1,14 +1,14 @@
 #ifndef ENV_H
 # define ENV_H
 
-#include <stddef.h>
-#include "carbon/llst.h"
+# include <stddef.h>
+# include "carbon/llst.h"
 
 typedef struct s_env
 {
-	char *key;
-	char *def;
-} t_env;
+	char		*key;
+	char		*def;
+}				t_env;
 
 void	msh_env_init(char **envp);
 
@@ -25,6 +25,6 @@ void	msh_env_free(t_env *env);
 t_llst	**msh_env_var(void);
 
 // TODO: remove for production
-void env_print(void);
+void	env_print(void);
 
 #endif

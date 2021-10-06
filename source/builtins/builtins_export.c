@@ -1,6 +1,6 @@
 #include "msh.h"
 
-extern volatile t_globalstate global_state;
+extern volatile t_globalstate	g_state;
 
 static t_env	*find_first(void)
 {
@@ -8,7 +8,7 @@ static t_env	*find_first(void)
 	int		val;
 	t_llst	*l;
 
-	l = global_state.env;
+	l = g_state.env;
 	first = l->data;
 	while (l)
 	{
@@ -58,7 +58,7 @@ static void	export_no_val(int min_val, t_llst *l)
 		print_env_data(tmp);
 		min_val = -1;
 		min = tmp;
-		l = global_state.env;
+		l = g_state.env;
 	}
 }
 
@@ -88,7 +88,7 @@ int	msh_builtins_export(t_prog *prog)
 	t_env	*entry;
 	t_llst	*l;
 
-	l = global_state.env;
+	l = g_state.env;
 	if (!prog->argv[1])
 		export_no_val(-1, l);
 	else

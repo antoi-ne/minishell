@@ -48,6 +48,6 @@ int	msh_parser(char *input, t_llst **progs)
 	msh_parser_weld_tokens(&tokens);
 	if (msh_parser_lexer(&tokens, progs) != 0)
 		return (-1);
-	llst_destroyl(&tokens, (void (*)(void *)) &msh_parser_token_free);
+	llst_destroyl(&tokens, (void (*)(void *)) & msh_parser_token_free);
 	return (0);
 }

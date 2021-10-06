@@ -6,7 +6,7 @@
 /*   By: maperrea <maperrea@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 17:59:30 by maperrea          #+#    #+#             */
-/*   Updated: 2021/10/06 18:11:28 by maperrea         ###   ########.fr       */
+/*   Updated: 2021/10/06 20:41:35 by alpeliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "carbon.h"
 #include <stdio.h>
 
-extern volatile t_globalstate global_state;
+extern volatile t_globalstate	g_state;
 
 static t_env	*env_new(void)
 {
@@ -71,7 +71,7 @@ void	msh_env_init(char **envp)
 		node = llst_new(entry);
 		if (!node)
 			utils_exit(EXIT_FAILURE, "memory allocation error");
-		llst_push((t_llst **)&global_state.env, node);
+		llst_push((t_llst **)&g_state.env, node);
 		i++;
 	}
 	adjust_shell_level();
@@ -84,7 +84,8 @@ void	msh_env_init(char **envp)
 // 	node = g_msh_env;
 // 	while (node)
 // 	{
-// 		printf("%s = %s\n", ((t_env *)node->data)->key, ((t_env *)node->data)->def);
+// 		printf("%s = %s\n", ((t_env *)node->data)->key, 
+// 		((t_env *)node->data)->def);
 // 		node = node->next;
 // 	}
 // }

@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-static char *build_cmd(char *path, char *cmd)
+static char	*build_cmd(char *path, char *cmd)
 {
 	char	*full_path;
 	char	*tmp;
@@ -24,29 +24,32 @@ static char *build_cmd(char *path, char *cmd)
 	return (full_path);
 }
 
-char	*msh_check_path(char *cmd)
+char	*absolute_path(char *cmd)
+{
+	char	*path;
+
+	path = str_dup(cmd);
+	if (path == NULL)
+		utils_exit(EXIT_FAILURE, NULL);
+	return (path);
+}
+
+char	*msh_check_path(char *cmd, size_t i)
 {
 	t_env		*env_path;
 	char		**paths;
-	size_t		i;
 	char		*path;
 	struct stat	buf;
 
 	if (cmd[0] == '/' || cmd[0] == '.' || cmd[0] == '~')
-	{
-		path = str_dup(cmd);
-		if (path == NULL)
-			utils_exit(EXIT_FAILURE, NULL);
-		return (path);
-	}
+		return (absolute_path(cmd));
 	env_path = msh_env_get("PATH");
 	if (env_path == NULL)
 		return (NULL);
 	paths = str_split(env_path->def, ':');
 	if (paths == NULL)
 		utils_exit(EXIT_FAILURE, NULL);
-	i = 0;
-	while (paths[i])
+	while (paths[++i])
 	{
 		path = build_cmd(paths[i], cmd);
 		if (stat(path, &buf) == 0)
@@ -55,7 +58,6 @@ char	*msh_check_path(char *cmd)
 			return (path);
 		}
 		free(path);
-		i++;
 	}
 	str_split_free(paths);
 	return (NULL);

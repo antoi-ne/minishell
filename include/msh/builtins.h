@@ -1,9 +1,9 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-#include "unistd.h"
-#include "errno.h"
-#include "string.h"
+# include "unistd.h"
+# include "errno.h"
+# include "string.h"
 
 int	(*msh_builtins_get(char *name))(t_prog *prog);
 

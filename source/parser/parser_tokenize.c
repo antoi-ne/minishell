@@ -21,90 +21,42 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	llst_push(tokens, node);
 }
 
+static void	add_space_token(char *input, t_llst **tokens, size_t *i)
+{
+	char	*token;
+
+	token = str_dup(" ");
+	if (token == NULL)
+		utils_exit(EXIT_FAILURE, NULL);
+	add_token(tokens, token, TT_SPCE);
+	*i = *i + 1;
+	while (input[*i] && input[*i] == ' ')
+		*i = *i + 1;
+}
+
 int	msh_parser_tokenize(char *input, t_llst **tokens)
 {
 	size_t	i;
-	size_t	marker;
-	char	*token;
+	int		err;
 
 	i = 0;
+	err = 0;
 	while (input[i])
 	{
 		if (input[i] == ' ')
-		{
-			token = str_dup(" ");
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_SPCE);
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			i++;
-			while (input[i] && input[i] == ' ')
-				i++;
-		}
+			add_space_token(input, tokens, &i);
 		else if (input[i] == '"')
-		{
-			marker = i;
-			i++;
-			while (input[i] && input[i] !='"')
-				i++;
-			if (input[i] == '\0')
-				return (utils_printerror(NULL, "syntax error: unclosed double quote string"));
-			token = str_sub(input, marker + 1, i - marker - 1);
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_DQS);
-			i++;
-		}
+			err = add_dqs_token(input, tokens, &i);
 		else if (input[i] == '\'')
-		{
-			marker = i;
-			i++;
-			while (input[i] && input[i] !='\'')
-				i++;
-			if (input[i] == '\0')
-				return (utils_printerror(NULL, "syntax error: unclosed single quote string"));
-			token = str_sub(input, marker + 1, i - marker - 1);
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_SQS);
-			i++;
-		}
+			err = add_sqs_token(input, tokens, &i);
 		else if (input[i] == '<' || input[i] == '>')
-		{
-			marker = i;
-			while (input[i] && (input[i] == input[marker]))
-				i++;
-			if (i - marker > 2)
-				return (utils_printerror(NULL, "syntax error: invalid token"));
-			token = str_sub(input, marker, i - marker);
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_RERD);
-		}
+			err = add_redirect_token(input, tokens, &i);
 		else if (input[i] == '|')
-		{
-			marker = i;
-			while (input [i] && input[i] == '|')
-				i ++;
-			if (i - marker > 2)
-				return (utils_printerror(NULL, "syntax error: multiple trailing pipes"));
-			token = str_dup("|");
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_PIPE);
-		}
+			err = add_pipe_token(input, tokens, &i);
 		else
-		{
-			marker = i;
-			i++;
-			while (input[i] && input[i] != ' ' && input[i] != '"' && input[i] != '\'' && input[i] != '<' && input[i] != '>' && input[i] != '$' && input[i] != '|')
-				i++;
-			token = str_sub(input, marker, i - marker);
-			if (token == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			add_token(tokens, token, TT_WORD);
-		}
+			add_word_token(input, tokens, &i);
+		if (err)
+			return (err);
 	}
 	return (0);
 }

@@ -7,17 +7,12 @@
 #include <signal.h>
 #include <stdlib.h>
 
-static t_prog	*init_prog(void)
+static void	end_document_redirect(char *input, int *pipefd)
 {
-	t_prog	*prog;
-
-	prog = mem_calloc(sizeof(t_prog));
-	if (prog == NULL)
-		utils_exit(EXIT_FAILURE, NULL);
-	prog->argv = NULL;
-	prog->input = STDIN_FILENO;
-	prog->output = STDOUT_FILENO;
-	return (prog);
+	free(input);
+	close(pipefd[1]);
+	close(pipefd[0]);
+	exit(EXIT_SUCCESS);
 }
 
 static int	here_document_redirect(t_token *delimiter)
@@ -41,15 +36,12 @@ static int	here_document_redirect(t_token *delimiter)
 			if (input == NULL || str_cmp(input, delimiter->data) == 0)
 				break ;
 			if (delimiter->is_string == 0)
-				input = msh_parser_expand_dqs(input);
+				input = msh_parser_expand_dqs(input, 0, 0);
 			write(pipefd[1], input, str_len(input));
 			write(pipefd[1], "\n", 1);
 			free(input);
 		}
-		free(input);
-		close(pipefd[1]);
-		close(pipefd[0]);
-		exit(EXIT_SUCCESS);
+		end_document_redirect(input, pipefd);
 	}
 	else
 	{
@@ -66,10 +58,11 @@ static int	here_document_redirect(t_token *delimiter)
 
 static int	parse_redirection(t_lexer *lexer)
 {
-	int 	fd;
+	int	fd;
 
 	if (lexer->n_node == NULL || lexer->n_token->type != TT_WORD)
-		return (utils_printerror(NULL, "syntax error: no token after redirection"));
+		return (utils_printerror
+			(NULL, "syntax error: no token after redirection"));
 	if (str_cmp(lexer->c_token->data, "<") == 0)
 	{
 		fd = open(lexer->n_token->data, O_RDONLY);
@@ -77,7 +70,7 @@ static int	parse_redirection(t_lexer *lexer)
 			utils_exit(EXIT_FAILURE, NULL);
 		lexer->c_prog->input = fd;
 	}
-	else if (str_cmp(lexer->c_token->data, "<<") == 0) 
+	else if (str_cmp(lexer->c_token->data, "<<") == 0)
 	{
 		lexer->c_prog->input = here_document_redirect(lexer->n_token);
 		if (lexer->c_prog->input == -1)
@@ -127,62 +120,15 @@ static char	**generate_argv(t_lexer *lexer)
 static void	finish_prog(t_lexer *lexer, t_llst **progs)
 {
 	t_llst	*node;
+
 	lexer->c_prog->argv = generate_argv(lexer);
 	node = llst_new(lexer->c_prog);
 	if (node == NULL)
-			utils_exit(EXIT_FAILURE, NULL);
+		utils_exit(EXIT_FAILURE, NULL);
 	llst_push(progs, node);
 	lexer->c_prog = NULL;
 	llst_destroyl(&(lexer->c_words), NULL);
 	lexer->c_words = NULL;
-}
-
-void	print_progs(t_llst *progs)
-{
-	t_llst	*node;
-	t_prog	*prog;
-	size_t	i;
-
-	node = progs;
-	while (node)
-	{
-		prog = (t_prog *)node->data;
-		printf("prog %p {\n    argv:", prog);
-		i = 0;
-		while (prog->argv[i])
-		{
-			printf(" %s", prog->argv[i]);
-			i++;
-		}
-		printf("\n    input: %d\n    output: %d\n}\n", prog->input, prog->output);
-		node = node->next;
-	}
-}
-
-void	apply_pipes(t_llst **progs)
-{
-	t_llst	*node;
-	t_prog	*prog;
-	t_prog	*next_prog;
-	int		pipefd[2];
-
-	node = *progs;
-	while (node && node->next)
-	{
-		prog = (t_prog *)node->data;
-		next_prog = (t_prog *)node->next->data;
-		if (pipe(pipefd) < 0)
-			utils_exit(EXIT_FAILURE, NULL);
-		if (prog->output == STDOUT_FILENO)
-			prog->output = pipefd[1];
-		else
-			close(pipefd[1]);
-		if (next_prog->input == STDIN_FILENO)
-			next_prog->input = pipefd[0];
-		else
-			close(pipefd[0]);
-		node = node->next;
-	}
 }
 
 int	msh_parser_lexer(t_llst **tokens, t_llst **progs)

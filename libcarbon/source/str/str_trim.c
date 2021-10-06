@@ -6,7 +6,7 @@
 /*   By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/15 12:50:58 by ancoulon          #+#    #+#             */
-/*   Updated: 2021/09/15 12:53:46 by ancoulon         ###   ########.fr       */
+/*   Updated: 2021/10/07 00:37:07 by alpeliss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ char	*str_trim(char *str, char *set)
 	end = str_len(str) - 1;
 	while (end >= 0 && strinc(str[end], set))
 		end--;
-	len = (end >= start) ? end - start : 0;
+	if (end >= start)
+		len = end - start;
+	else
+		len = 0;
 	return (str_sub(str, start, len + 1));
 }

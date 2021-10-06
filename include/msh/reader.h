@@ -3,6 +3,6 @@
 
 # define MSH_WHITESPACES " \t\n\v\f\r"
 
-void	msh_reader_start(void);
+void	msh_reader_start(int err);
 
 #endif

@@ -1,23 +1,31 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-typedef enum	e_token_type
+typedef enum e_token_type
 {
-	TT_UKWN, // unknown, not pased yet
-	TT_SPCE, // space
-	TT_DQS, // double quote string
-	TT_SQS, // single quote string
-	TT_WORD, // word (interpretable token)
-	TT_RERD, // redirection "> >> < <<"
-	TT_PIPE // pipe "|"
+	TT_UKWN,
+	TT_SPCE,
+	TT_DQS,
+	TT_SQS,
+	TT_WORD,
+	TT_RERD,
+	TT_PIPE
 }	t_token_type;
+// unknown, not pased yet
+// space
+// double quote string
+// single quote string
+// word (interpretable token)
+// redirection "> >> < <<"
+// pipe "|"
 
-typedef struct	s_token
+typedef struct s_token
 {
 	char			*data;
 	t_token_type	type;
-	int				is_string; //only used for heredoc
+	int				is_string;
 }	t_token;
+//is_string only used for heredoc
 
 typedef struct s_prog
 {
@@ -37,7 +45,7 @@ typedef struct s_lexer
 	t_llst	*c_words;
 }	t_lexer;
 
-typedef union	u_bytearray
+typedef union u_bytearray
 {
 	int		integer;
 	char	byte[4];
@@ -59,10 +67,20 @@ void	msh_parser_token_free(t_token *token);
 
 void	msh_parser_set_retval(int retval);
 
-int	msh_parser_get_retval(void);
+int		msh_parser_get_retval(void);
 
 void	print_progs(t_llst *progs);
+t_prog	*init_prog(void);
 
-char	*msh_parser_expand_dqs(char *str);
+char	*msh_parser_expand_dqs(char *str, size_t i, size_t start);
+
+void	apply_pipes(t_llst **progs);
+
+void	add_token(t_llst **tokens, char *data, t_token_type type);
+int		add_dqs_token(char *input, t_llst **tokens, size_t *i);
+int		add_sqs_token(char *input, t_llst **tokens, size_t *i);
+int		add_redirect_token(char *input, t_llst **tokens, size_t *i);
+int		add_pipe_token(char *input, t_llst **tokens, size_t *i);
+void	add_word_token(char *input, t_llst **tokens, size_t *i);
 
 #endif
