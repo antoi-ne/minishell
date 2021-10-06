@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_init.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maperrea <maperrea@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/06 17:59:30 by maperrea          #+#    #+#             */
+/*   Updated: 2021/10/06 18:11:28 by maperrea         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "msh.h"
 #include "carbon.h"
 #include <stdio.h>
@@ -14,13 +26,34 @@ static t_env	*env_new(void)
 	return (entry);
 }
 
+void	adjust_shell_level(void)
+{
+	int		new_level;
+	t_env	*shlvl;
+
+	shlvl = msh_env_get("SHLVL");
+	if (shlvl == NULL || *(shlvl->def) == '\0' || !utils_is_number(shlvl->def))
+		new_level = 1;
+	else
+		new_level = types_str2int(shlvl->def) + 1;
+	if (new_level < 0)
+		new_level = 0;
+	else if (new_level >= 1000)
+	{
+		fmt_fprint(2, "msh: shell level (");
+		fmt_fprint(2, types_int2str(new_level));
+		fmt_fprint(2, ") too high, resetting to 1\n");
+		new_level = 1;
+	}
+	msh_env_set("SHLVL", types_int2str(new_level));
+}
+
 void	msh_env_init(char **envp)
 {
 	size_t	i;
 	size_t	key_len;
 	t_env	*entry;
 	t_llst	*node;
-
 
 	i = 0;
 	while (envp[i])
@@ -41,6 +74,7 @@ void	msh_env_init(char **envp)
 		llst_push(msh_env_var(), node);
 		i++;
 	}
+	adjust_shell_level();
 }
 
 // void	env_print(void)
