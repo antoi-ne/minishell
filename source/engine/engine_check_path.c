@@ -15,12 +15,12 @@ static char *build_cmd(char *path, char *cmd)
 	{
 		tmp = str_join(path, "/");
 		if (tmp == NULL)
-			utils_exit(EXIT_FAILURE, "memory allocation error");
+			utils_exit(EXIT_FAILURE, NULL);
 		full_path = str_join(tmp, cmd);
 		free(tmp);
 	}
 	if (full_path == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	return (full_path);
 }
 
@@ -36,7 +36,7 @@ char	*msh_check_path(char *cmd)
 	{
 		path = str_dup(cmd);
 		if (path == NULL)
-			utils_exit(EXIT_FAILURE, "memory allocation error");
+			utils_exit(EXIT_FAILURE, NULL);
 		return (path);
 	}
 	env_path = msh_env_get("PATH");
@@ -44,7 +44,7 @@ char	*msh_check_path(char *cmd)
 		return (NULL);
 	paths = str_split(env_path->def, ':');
 	if (paths == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	i = 0;
 	while (paths[i])
 	{

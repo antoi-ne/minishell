@@ -39,14 +39,16 @@ static void	execute_all_progs(t_llst **progs)
 		{
 			pid = fork();
 			if (pid < 0)
-				utils_exit(EXIT_FAILURE, "Fork error");
+				utils_exit(EXIT_FAILURE, NULL);
 			else if (pid == 0)
 			{
-				dup2(prog->input, STDIN_FILENO);
-				dup2(prog->output, STDOUT_FILENO);
+				if (dup2(prog->input, STDIN_FILENO) < 0)
+					exit(EXIT_FAILURE);
+				if (dup2(prog->output, STDOUT_FILENO) < 0)
+					exit(EXIT_FAILURE);
 				prog_close_fds(prog);
 				retval = msh_builtins_get(prog->argv[0])(prog);
-				exit (retval);
+				exit(retval);
 			}
 			else
 			{
@@ -62,14 +64,20 @@ static void	execute_all_progs(t_llst **progs)
 		{
 			cmd = msh_check_path(prog->argv[0]);
 			if (cmd == NULL)
-				utils_exit(EXIT_FAILURE, "Command not found");
+			{
+				utils_printerror(cmd, "command not found");
+				node = node->next;
+				continue;
+			}
 			pid = fork();
 			if (pid < 0)
-				utils_exit(EXIT_FAILURE, "Fork error");
+				utils_exit(EXIT_FAILURE, NULL);
 			else if (pid == 0)
 			{
-				dup2(prog->input, STDIN_FILENO);
-				dup2(prog->output, STDOUT_FILENO);
+				if (dup2(prog->input, STDIN_FILENO) == 0)
+					exit(EXIT_FAILURE);
+				if (dup2(prog->output, STDOUT_FILENO) < 0)
+					exit(EXIT_FAILURE);
 				prog_close_fds(prog);
 				retval = execve(cmd, prog->argv, msh_env_all());
 				exit (retval);

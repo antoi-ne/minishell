@@ -12,7 +12,6 @@ void	msh_parser_prog_free(t_prog *prog)
 {
 	size_t	i;
 
-	// printf("freeing prog %s:\n", prog->argv[0]);
 	i = 0;
 	while (prog->argv[i])
 	{
