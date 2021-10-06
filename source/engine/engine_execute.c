@@ -56,7 +56,7 @@ static void	execute_all_progs(t_llst **progs)
 				if (node->next == NULL)
 				{
 					waitpid(pid, &retval, 0);
-					msh_parser_set_retval(retval);
+					msh_parser_set_retval(WEXITSTATUS(retval));
 				}
 			}
 		}
@@ -67,6 +67,7 @@ static void	execute_all_progs(t_llst **progs)
 			{
 				utils_printerror(prog->argv[0], "command not found");
 				prog_close_fds(prog);
+				msh_parser_set_retval(127);
 				node = node->next;
 				continue;
 			}
@@ -90,7 +91,7 @@ static void	execute_all_progs(t_llst **progs)
 				if (node->next == NULL)
 				{
 					waitpid(pid, &retval, 0);
-					msh_parser_set_retval(retval);
+					msh_parser_set_retval(WEXITSTATUS(retval));
 				}
 			}
 		}
@@ -100,10 +101,15 @@ static void	execute_all_progs(t_llst **progs)
 
 void	msh_engine_execute(t_llst **progs)
 {
-	if (llst_len(*progs) == 1 && str_cmp(((t_prog *)(*progs)->data)->argv[0], "exit") == 0)
+	t_prog	*prog;
+	if (llst_len(*progs) == 1)
 	{
-		execute_builtin_nofork((t_prog *)(*progs)->data);
-		return ;
+		prog = (t_prog *)(*progs)->data;
+		if (msh_builtins_get(prog->argv[0]) == &msh_builtins_exit)
+		{
+			execute_builtin_nofork(prog);
+			return ;
+		}
 	}
 	execute_all_progs(progs);
 }
