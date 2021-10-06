@@ -13,7 +13,7 @@ static t_prog	*init_prog(void)
 
 	prog = mem_calloc(sizeof(t_prog));
 	if (prog == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	prog->argv = NULL;
 	prog->input = STDIN_FILENO;
 	prog->output = STDOUT_FILENO;
@@ -28,10 +28,10 @@ static int	here_document_redirect(t_token *delimiter)
 	int		retval;
 
 	if (pipe(pipefd) < 0)
-		utils_exit(EXIT_FAILURE, "pipe error");
+		utils_exit(EXIT_FAILURE, NULL);
 	pid = fork();
 	if (pid < 0)
-		utils_exit(EXIT_FAILURE, "fork error");
+		utils_exit(EXIT_FAILURE, NULL);
 	else if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
@@ -69,12 +69,12 @@ static int	parse_redirection(t_lexer *lexer)
 	int 	fd;
 
 	if (lexer->n_node == NULL || lexer->n_token->type != TT_WORD)
-		utils_exit(EXIT_FAILURE, "parsing error: no token after redirection");
+		return (utils_printerror(NULL, "syntax error: no token after redirection"));
 	if (str_cmp(lexer->c_token->data, "<") == 0)
 	{
 		fd = open(lexer->n_token->data, O_RDONLY);
 		if (fd < 0)
-			utils_exit(EXIT_FAILURE, "cannot open file");
+			utils_exit(EXIT_FAILURE, NULL);
 		lexer->c_prog->input = fd;
 	}
 	else if (str_cmp(lexer->c_token->data, "<<") == 0) 
@@ -87,14 +87,14 @@ static int	parse_redirection(t_lexer *lexer)
 	{
 		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 		if (fd < 0)
-			utils_exit(EXIT_FAILURE, "cannot open file 1");
+			utils_exit(EXIT_FAILURE, NULL);
 		lexer->c_prog->output = fd;
 	}
 	else if (str_cmp(lexer->c_token->data, ">>") == 0)
 	{
 		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_APPEND, 0777);
 		if (fd < 0)
-			utils_exit(EXIT_FAILURE, "cannot open file 2");
+			utils_exit(EXIT_FAILURE, NULL);
 		lexer->c_prog->output = fd;
 	}
 	return (0);
@@ -110,14 +110,14 @@ static char	**generate_argv(t_lexer *lexer)
 	node = lexer->c_words;
 	argv = mem_calloc(sizeof(char *) * (llst_len(node) + 1));
 	if (argv == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	i = 0;
 	while (node)
 	{
 		token = (t_token *)node->data;
 		argv[i] = str_dup(token->data);
 		if (argv[i] == NULL)
-			utils_exit(EXIT_FAILURE, "memory allocation error");
+			utils_exit(EXIT_FAILURE, NULL);
 		node = node->next;
 		i++;
 	}
@@ -130,7 +130,7 @@ static void	finish_prog(t_lexer *lexer, t_llst **progs)
 	lexer->c_prog->argv = generate_argv(lexer);
 	node = llst_new(lexer->c_prog);
 	if (node == NULL)
-			utils_exit(EXIT_FAILURE, "memory allocation error");
+			utils_exit(EXIT_FAILURE, NULL);
 	llst_push(progs, node);
 	lexer->c_prog = NULL;
 	llst_destroyl(&(lexer->c_words), NULL);
@@ -172,7 +172,7 @@ void	apply_pipes(t_llst **progs)
 		prog = (t_prog *)node->data;
 		next_prog = (t_prog *)node->next->data;
 		if (pipe(pipefd) < 0)
-			utils_exit(EXIT_FAILURE, "could not create pipe");
+			utils_exit(EXIT_FAILURE, NULL);
 		if (prog->output == STDOUT_FILENO)
 			prog->output = pipefd[1];
 		else
@@ -208,12 +208,12 @@ int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		{
 			copy = llst_new(lexer.c_node->data);
 			if (copy == NULL)
-				utils_exit(EXIT_FAILURE, "memory allocation error");
+				utils_exit(EXIT_FAILURE, NULL);
 			llst_push(&(lexer.c_words), copy);
 		}
 		else if (lexer.c_token->type == TT_RERD)
 		{
-			if (parse_redirection(&lexer) == -1)
+			if (parse_redirection(&lexer) != 0)
 				return (-1);
 			lexer.c_node = lexer.c_node->next;
 		}
@@ -222,7 +222,7 @@ int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		lexer.c_node = lexer.c_node->next;
 	}
 	if (llst_len(lexer.c_words) < 1)
-		utils_exit(EXIT_FAILURE, "nothing after pipe");
+		return (utils_printerror(NULL, "syntax error: no command after pipe"));
 	finish_prog(&lexer, progs);
 	apply_pipes(progs);
 	return (0);

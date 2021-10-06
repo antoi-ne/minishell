@@ -24,7 +24,7 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		{
 			joined = str_join(token->data, t_next->data);
 			if (joined == NULL)
-				utils_exit(EXIT_FAILURE, "memory allocation error");
+				utils_exit(EXIT_FAILURE, NULL);
 			free(token->data);
 			token->data = joined;
 			token->type = TT_WORD;

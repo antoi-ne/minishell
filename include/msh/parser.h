@@ -45,7 +45,7 @@ typedef union	u_bytearray
 
 int		msh_parser(char *input, t_llst **progs);
 
-void	msh_parser_tokenize(char *input, t_llst **tokens);
+int		msh_parser_tokenize(char *input, t_llst **tokens);
 
 void	msh_parser_expand(t_llst **tokens);
 

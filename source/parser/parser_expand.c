@@ -11,7 +11,7 @@ static char	*dqs_newstr(char *str, char *expanded, size_t start, size_t end)
 	i = 0;
 	new = mem_calloc(sizeof(char) * (str_len(str) - (end - start) + str_len(expanded) + 1));
 	if (new == NULL)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	while (i < start)
 	{
 		new[i] = str[i];
@@ -62,7 +62,7 @@ char	*msh_parser_expand_dqs(char *str)
 			else
 				expanded = str_dup(var->def);
 			if (expanded == NULL)
-				utils_exit(EXIT_FAILURE, "memory allocation error");
+				utils_exit(EXIT_FAILURE, NULL);
 			new = dqs_newstr(str, expanded, start, i);
 			free(str);
 			str = new;
@@ -105,7 +105,7 @@ void	msh_parser_expand(t_llst **tokens)
 					expanded = str_dup(var->def);
 			}
 			if (expanded == NULL)
-				utils_exit(EXIT_FAILURE, "memory allocation error");
+				utils_exit(EXIT_FAILURE, NULL);
 			free(token->data);
 			token->data = expanded;
 		}

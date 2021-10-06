@@ -21,7 +21,7 @@ void	add_token(t_llst **tokens, char *data, t_token_type type)
 	llst_push(tokens, node);
 }
 
-void	msh_parser_tokenize(char *input, t_llst **tokens)
+int	msh_parser_tokenize(char *input, t_llst **tokens)
 {
 	size_t	i;
 	size_t	marker;
@@ -49,7 +49,7 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			while (input[i] && input[i] !='"')
 				i++;
 			if (input[i] == '\0')
-				utils_exit(EXIT_FAILURE, "unclosed double quote string");
+				return (utils_printerror(NULL, "syntax error: unclosed double quote string"));
 			token = str_sub(input, marker + 1, i - marker - 1);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, NULL);
@@ -63,7 +63,7 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			while (input[i] && input[i] !='\'')
 				i++;
 			if (input[i] == '\0')
-				utils_exit(EXIT_FAILURE, "unclosed single quote string");
+				return (utils_printerror(NULL, "syntax error: unclosed single quote string"));
 			token = str_sub(input, marker + 1, i - marker - 1);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, NULL);
@@ -76,7 +76,7 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			while (input[i] && (input[i] == input[marker]))
 				i++;
 			if (i - marker > 2)
-				utils_exit(EXIT_FAILURE, "parsing error: invalid redirection token");
+				return (utils_printerror(NULL, "syntax error: invalid token"));
 			token = str_sub(input, marker, i - marker);
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, NULL);
@@ -88,7 +88,7 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			while (input [i] && input[i] == '|')
 				i ++;
 			if (i - marker > 2)
-				utils_exit(EXIT_FAILURE, "parsing error: multiple trailing pipes");
+				return (utils_printerror(NULL, "syntax error: multiple trailing pipes"));
 			token = str_dup("|");
 			if (token == NULL)
 				utils_exit(EXIT_FAILURE, NULL);
@@ -106,4 +106,5 @@ void	msh_parser_tokenize(char *input, t_llst **tokens)
 			add_token(tokens, token, TT_WORD);
 		}
 	}
+	return (0);
 }
