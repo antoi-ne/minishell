@@ -1,12 +1,14 @@
 #include "msh.h"
 
+extern volatile t_globalstate global_state;
+
 static t_env	*find_first(void)
 {
 	t_env	*first;
 	int		val;
 	t_llst	*l;
 
-	l = *msh_env_var();
+	l = global_state.env;
 	first = l->data;
 	while (l)
 	{
@@ -56,7 +58,7 @@ static void	export_no_val(int min_val, t_llst *l)
 		print_env_data(tmp);
 		min_val = -1;
 		min = tmp;
-		l = *msh_env_var();
+		l = global_state.env;
 	}
 }
 
@@ -86,7 +88,7 @@ int	msh_builtins_export(t_prog *prog)
 	t_env	*entry;
 	t_llst	*l;
 
-	l = *msh_env_var();
+	l = global_state.env;
 	if (!prog->argv[1])
 		export_no_val(-1, l);
 	else

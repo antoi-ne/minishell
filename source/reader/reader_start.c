@@ -5,12 +5,13 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+extern volatile t_globalstate global_state;
+
 void	msh_reader_start(void)
 {
 	char	*input;
 	char	*tinput;
 	t_llst	*progs;
-	extern int	g_started_child;
 
 	while (1) {
 		input = readline(MSH_PROMPT);
@@ -18,7 +19,7 @@ void	msh_reader_start(void)
 			break;
 		if (*input == '\0')
 			continue ;
-		g_started_child = 1;
+		global_state.running_subprocess = 1;
 		add_history(input);
 		tinput = str_trim(input, " \t\n\v\f\r");
 		free(input);
@@ -34,7 +35,7 @@ void	msh_reader_start(void)
 		llst_destroyl(&progs, (void (*)(void *)) &msh_parser_prog_free);
 		// every data sets needed to apply the input line should be freed, the only section of
 		// data that should be keeped between the loop's iterations (the command history) is managed by add_history()
-		g_started_child = 0;
+		global_state.running_subprocess = 0;
 	}
 	printf("exit\n");
 	rl_clear_history();

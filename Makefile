@@ -1,7 +1,7 @@
 NAME		= minishell
 
 CC			= gcc -g
-CFLAGS		= -Wall -Wextra -Werror -I /Users/maperrea/.brew/opt/readline/include -I libcarbon/include -I include
+CFLAGS		= -Wall -Wextra -Werror -I /Users/ancoulon/.local/include -I libcarbon/include -I include
 RM			= rm -f
 
 SRCDIR		= source
@@ -22,7 +22,7 @@ $(OBJDIR):
 
 $(NAME):	$(OBJDIR) $(OBJS)
 			make -C libcarbon
-			$(CC) $(CFLAGS) -L /Users/maperrea/.brew/opt/readline/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
+			$(CC) $(CFLAGS) -L /Users/ancoulon/.local/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
 
 clean:
 			make -C libcarbon clean

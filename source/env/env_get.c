@@ -1,14 +1,14 @@
 #include "msh.h"
 #include "carbon.h"
 
-t_llst	*g_msh_env;
+extern volatile t_globalstate global_state;
 
 t_env	*msh_env_get(char *key)
 {
 	t_llst	*tmp;
 	t_env	*data;
 
-	tmp = *msh_env_var();
+	tmp = global_state.env;
 	while (tmp)
 	{
 		data = tmp->data;

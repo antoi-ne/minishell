@@ -2,7 +2,7 @@
 #include "carbon.h"
 #include <stdio.h>
 
-t_llst	*g_msh_env;
+extern volatile t_globalstate global_state;
 
 static t_env	*env_new(void)
 {
@@ -38,7 +38,7 @@ void	msh_env_init(char **envp)
 		node = llst_new(entry);
 		if (!node)
 			utils_exit(EXIT_FAILURE, "memory allocation error");
-		llst_push(msh_env_var(), node);
+		llst_push((t_llst **)&global_state.env, node);
 		i++;
 	}
 }

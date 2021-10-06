@@ -1,7 +1,7 @@
 #include "msh.h"
 #include "carbon.h"
 
-t_llst	*g_msh_env;
+extern volatile t_globalstate global_state;
 
 int	msh_env_unset(char *key)
 {
@@ -9,7 +9,7 @@ int	msh_env_unset(char *key)
 	t_llst	*prev;
 	t_env	*env;
 
-	node = *msh_env_var();
+	node = global_state.env;
 	prev = NULL;
 	while (node)
 	{
@@ -19,7 +19,7 @@ int	msh_env_unset(char *key)
 			if (prev)
 				prev->next = node->next;
 			else
-				*msh_env_var() = node->next;
+				global_state.env = node->next;
 			llst_destroy(node, (void (*)(void *)) &msh_env_free);
 			return (0);
 		}

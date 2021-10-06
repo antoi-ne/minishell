@@ -6,13 +6,13 @@
 #include <readline/readline.h>
 #include <errno.h>
 
-int	g_started_child = 0;
+t_globalstate	global_state = {0, 0, NULL};
 
 void	sigint_handler(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-	if (g_started_child == 0)
+	if (global_state.running_subprocess == 0)
 	{
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -27,6 +27,7 @@ int main(int argc, char **argv, char **envp)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	msh_env_init(envp);
+	// msh_env_set("GAMING", "teststring");
 	msh_reader_start();
 	exit(EXIT_SUCCESS);
 }

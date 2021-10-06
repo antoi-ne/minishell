@@ -1,11 +1,13 @@
 #include "msh.h"
 
+extern volatile t_globalstate global_state;
+
 int	msh_builtins_env(t_prog *prog)
 {
 	t_llst	*l;
 
 	prog->input = prog->input;
-	l = *msh_env_var();
+	l = global_state.env;
 	while (l)
 	{
 		if (((t_env *)l->data)->def)
