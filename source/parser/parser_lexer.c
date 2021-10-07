@@ -2,96 +2,7 @@
 #include "carbon.h"
 #include <stdio.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <signal.h>
 #include <stdlib.h>
-
-static void	end_document_redirect(char *input, int *pipefd)
-{
-	free(input);
-	close(pipefd[1]);
-	close(pipefd[0]);
-	exit(EXIT_SUCCESS);
-}
-
-static int	here_document_redirect(t_token *delimiter)
-{
-	char	*input;
-	int		pipefd[2];
-	pid_t	pid;
-	int		retval;
-
-	if (pipe(pipefd) < 0)
-		utils_exit(EXIT_FAILURE, NULL);
-	pid = fork();
-	if (pid < 0)
-		utils_exit(EXIT_FAILURE, NULL);
-	else if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		while (1)
-		{
-			input = readline("> ");
-			if (input == NULL || str_cmp(input, delimiter->data) == 0)
-				break ;
-			if (delimiter->is_string == 0)
-				input = msh_parser_expand_dqs(input, 0, 0);
-			write(pipefd[1], input, str_len(input));
-			write(pipefd[1], "\n", 1);
-			free(input);
-		}
-		end_document_redirect(input, pipefd);
-	}
-	else
-	{
-		waitpid(pid, &retval, 0);
-		close(pipefd[1]);
-		if (retval != EXIT_SUCCESS)
-		{
-			close(pipefd[0]);
-			return (-1);
-		}
-	}
-	return (pipefd[0]);
-}
-
-static int	parse_redirection(t_lexer *lexer)
-{
-	int	fd;
-
-	if (lexer->n_node == NULL || lexer->n_token->type != TT_WORD)
-		return (utils_printerror
-			(NULL, "syntax error: no token after redirection"));
-	if (str_cmp(lexer->c_token->data, "<") == 0)
-	{
-		fd = open(lexer->n_token->data, O_RDONLY);
-		if (fd < 0)
-			utils_exit(EXIT_FAILURE, NULL);
-		lexer->c_prog->input = fd;
-	}
-	else if (str_cmp(lexer->c_token->data, "<<") == 0)
-	{
-		lexer->c_prog->input = here_document_redirect(lexer->n_token);
-		if (lexer->c_prog->input == -1)
-			return (-1);
-	}
-	else if (str_cmp(lexer->c_token->data, ">") == 0)
-	{
-		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_TRUNC, 0777);
-		if (fd < 0)
-			utils_exit(EXIT_FAILURE, NULL);
-		lexer->c_prog->output = fd;
-	}
-	else if (str_cmp(lexer->c_token->data, ">>") == 0)
-	{
-		fd = open(lexer->n_token->data, O_WRONLY | O_CREAT | O_APPEND, 0777);
-		if (fd < 0)
-			utils_exit(EXIT_FAILURE, NULL);
-		lexer->c_prog->output = fd;
-	}
-	return (0);
-}
 
 static char	**generate_argv(t_lexer *lexer)
 {
@@ -150,7 +61,7 @@ static int	process_node(t_lexer *lexer, t_llst **progs)
 	}
 	else if (lexer->c_token->type == TT_RERD)
 	{
-		if (parse_redirection(lexer) != 0)
+		if (msh_parser_redirection(lexer) != 0)
 			return (-1);
 		lexer->c_node = lexer->c_node->next;
 	}

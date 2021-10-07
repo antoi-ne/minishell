@@ -61,6 +61,10 @@ void	msh_parser_weld_tokens(t_llst **tokens);
 
 int		msh_parser_lexer(t_llst **tokens, t_llst **progs);
 
+int		msh_parser_redirection(t_lexer *lexer);
+
+int		here_document_redirect(t_token *delimiter);
+
 void	msh_parser_prog_free(t_prog *prog);
 
 void	msh_parser_token_free(t_token *token);
