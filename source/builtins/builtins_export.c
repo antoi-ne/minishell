@@ -1,4 +1,5 @@
 #include "msh.h"
+#include <stdio.h>
 
 extern volatile t_globalstate	g_state;
 
@@ -69,16 +70,21 @@ static t_env	*extract_data(char *str)
 
 	entry = mem_calloc(sizeof(t_env));
 	if (!entry)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
-	return (entry);
-	while (str[i] != '=')
+		utils_exit(EXIT_FAILURE, NULL);
+	i = 0;
+	while (str[i] && str[i] != '=')
 		i++;
+	if (str[i] == '\0')
+	{
+		free(entry);
+		return (NULL);
+	}
 	entry->key = str_sub(str, 0, i);
 	if (!entry->key)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	entry->def = str_sub(str, i + 1, str_len(str));
 	if (!entry->def)
-		utils_exit(EXIT_FAILURE, "memory allocation error");
+		utils_exit(EXIT_FAILURE, NULL);
 	return (entry);
 }
 
@@ -100,6 +106,7 @@ int	msh_builtins_export(t_prog *prog)
 			msh_env_set(entry->key, entry->def);
 			free(entry->key);
 			free(entry->def);
+			free(entry);
 			i++;
 		}
 	}

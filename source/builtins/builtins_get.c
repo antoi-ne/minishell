@@ -32,8 +32,12 @@ int	(*msh_builtins_get(char *name))(t_prog *prog)
 	while (names[i])
 	{
 		if (str_cmp(lc, names[i]) == 0)
+		{
+			free (lc);
 			return (defs[i]);
+		}
 		i++;
 	}
+	free(lc);
 	return (NULL);
 }

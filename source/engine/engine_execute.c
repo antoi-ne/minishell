@@ -22,7 +22,7 @@ void	msh_engine_execute(t_llst **progs)
 	if (llst_len(*progs) == 1)
 	{
 		prog = (t_prog *)(*progs)->data;
-		if (msh_builtins_get(prog->argv[0]) == &msh_builtins_exit)
+		if (msh_builtins_get(prog->argv[0]))
 		{
 			execute_builtin_nofork(prog);
 			return ;
