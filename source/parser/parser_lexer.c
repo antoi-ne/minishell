@@ -131,10 +131,37 @@ static void	finish_prog(t_lexer *lexer, t_llst **progs)
 	lexer->c_words = NULL;
 }
 
+static int	process_node(t_lexer *lexer, t_llst **progs)
+{
+	t_llst	*copy;
+
+	lexer->c_token = (t_token *)lexer->c_node->data;
+	lexer->n_node = lexer->c_node->next;
+	if (lexer->n_node)
+		lexer->n_token = (t_token *)lexer->n_node->data;
+	else
+		lexer->n_token = NULL;
+	if (lexer->c_token->type == TT_WORD)
+	{
+		copy = llst_new(lexer->c_node->data);
+		if (copy == NULL)
+			utils_exit(EXIT_FAILURE, NULL);
+		llst_push(&(lexer->c_words), copy);
+	}
+	else if (lexer->c_token->type == TT_RERD)
+	{
+		if (parse_redirection(lexer) != 0)
+			return (-1);
+		lexer->c_node = lexer->c_node->next;
+	}
+	else if (lexer->c_token->type == TT_PIPE)
+		finish_prog(lexer, progs);
+	return (0);
+}
+
 int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 {
 	t_lexer	lexer;
-	t_llst	*copy;
 
 	lexer.c_words = NULL;
 	lexer.tokens = tokens;
@@ -144,27 +171,8 @@ int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 	{
 		if (lexer.c_prog == NULL)
 			lexer.c_prog = init_prog();
-		lexer.c_token = (t_token *)lexer.c_node->data;
-		lexer.n_node = lexer.c_node->next;
-		if (lexer.n_node)
-			lexer.n_token = (t_token *)lexer.n_node->data;
-		else
-			lexer.n_token = NULL;
-		if (lexer.c_token->type == TT_WORD)
-		{
-			copy = llst_new(lexer.c_node->data);
-			if (copy == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			llst_push(&(lexer.c_words), copy);
-		}
-		else if (lexer.c_token->type == TT_RERD)
-		{
-			if (parse_redirection(&lexer) != 0)
-				return (-1);
-			lexer.c_node = lexer.c_node->next;
-		}
-		else if (lexer.c_token->type == TT_PIPE)
-			finish_prog(&lexer, progs);
+		if (process_node(&lexer, progs) == -1)
+			return (-1);
 		lexer.c_node = lexer.c_node->next;
 	}
 	if (llst_len(lexer.c_words) < 1)

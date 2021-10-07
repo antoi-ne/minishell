@@ -1,7 +1,16 @@
 NAME		= minishell
 
+ifeq ($(USER),ancoulon)
+RL_LIB		= /Users/ancoulon/.local/lib
+RL_INC		= /Users/ancoulon/.local/include
+endif
+ifeq ($(USER),maperrea)
+RL_LIB		= /Users/maperrea/.brew/opt/readline/lib
+RL_INC		= /Users/maperrea/.brew/opt/readline/include
+endif
+
 CC			= gcc -g #-fsanitize=address
-CFLAGS		= -Wall -Wextra -Werror -I /Users/ancoulon/.local/include -I libcarbon/include -I include
+CFLAGS		= -Wall -Wextra -Werror -I $(RL_INC) -I libcarbon/include -I include
 RM			= rm -f
 
 SRCDIR		= source
@@ -22,7 +31,7 @@ $(OBJDIR):
 
 $(NAME):	$(OBJDIR) $(OBJS)
 			make -C libcarbon
-			$(CC) $(CFLAGS) -L /Users/ancoulon/.local/lib -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
+			$(CC) $(CFLAGS) -L $(RL_LIB) -lreadline -L libcarbon -lcarbon -o $(NAME) $(OBJS)
 
 clean:
 			make -C libcarbon clean
