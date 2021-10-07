@@ -35,7 +35,10 @@ void	msh_reader_start(int err)
 		err = msh_parser(input, &progs);
 		free (input);
 		if (err == -1)
+		{
+			g_state.running_subprocess = 0;
 			continue ;
+		}
 		msh_engine_execute(&progs);
 		llst_destroyl(&progs, (void (*)(void *)) & msh_parser_prog_free);
 		g_state.running_subprocess = 0;

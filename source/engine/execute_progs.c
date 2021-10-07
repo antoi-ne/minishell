@@ -90,7 +90,7 @@ void	execute_all_progs(t_llst **progs)
 				msh_parser_set_retval(127);
 				return ;
 			}
-			node = node->next;
 		}
+		node = node->next;
 	}
 }

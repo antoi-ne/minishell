@@ -47,7 +47,7 @@ int	add_redirect_token(char *input, t_llst **tokens, size_t *i)
 
 	marker = *i;
 	while (input[*i] && (input[*i] == input[marker]))
-		i++;
+		*i = *i + 1;
 	if (*i - marker > 2)
 		return (utils_printerror(NULL, "syntax error: invalid token"));
 	token = str_sub(input, marker, *i - marker);

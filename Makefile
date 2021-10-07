@@ -1,6 +1,6 @@
 NAME		= minishell
 
-CC			= gcc -g
+CC			= gcc -g #-fsanitize=address
 CFLAGS		= -Wall -Wextra -Werror -I /Users/ancoulon/.local/include -I libcarbon/include -I include
 RM			= rm -f
 
