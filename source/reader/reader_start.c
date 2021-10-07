@@ -31,14 +31,17 @@ void	msh_reader_start(int err)
 		g_state.running_subprocess = 1;
 		add_history(input);
 		input = trim_input(input);
+		if (input[0] == '\0')
+		{
+			free(input);
+			continue ;
+		}
 		progs = NULL;
 		err = msh_parser(input, &progs);
 		free (input);
 		if (err == -1)
-		{
-			g_state.running_subprocess = 0;
 			continue ;
-		}
+		g_state.running_subprocess = 1;
 		msh_engine_execute(&progs);
 		llst_destroyl(&progs, (void (*)(void *)) & msh_parser_prog_free);
 		g_state.running_subprocess = 0;

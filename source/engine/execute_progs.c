@@ -24,6 +24,7 @@ static void	execute_builtin(t_llst *node, t_prog *prog)
 			exit(EXIT_FAILURE);
 		prog_close_fds(prog);
 		retval = msh_builtins_get(prog->argv[0])(prog);
+		msh_parser_prog_free(prog);
 		exit(retval);
 	}
 	else

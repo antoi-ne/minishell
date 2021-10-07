@@ -6,6 +6,7 @@
 
 int	msh_builtins_exit(t_prog *prog)
 {
+	(void)prog;
 	rl_clear_history();
 	exit(EXIT_SUCCESS);
 }
