@@ -1,48 +1,38 @@
 #include "msh.h"
+#include <stdio.h>
 
-static void	change_directory_env(void)
+static void	change_directory_env(char *old_cwd)
 {
-	t_env	*old_pwd;
-	t_env	*pwd;
+	char	*cwd;
 
-	old_pwd = msh_env_get("OLDPWD");
-	pwd = msh_env_get("PWD");
-	if (old_pwd)
-	{
-		free(old_pwd->def);
-		old_pwd->def = pwd->def;
-	}
-	else if (pwd)
-		free(pwd->def);
-	if (pwd)
-		pwd->def = getcwd(NULL, 0);
+	msh_env_set("OLDPWD", old_cwd);
+	free(old_cwd);
+	cwd = getcwd(NULL, 0);
+	msh_env_set("PWD", cwd);
+	free(cwd);
 }
 
 int	msh_builtins_cd(t_prog *prog)
 {
 	int		i;
 	t_env	*home;
+	char	*old_cwd;
 
 	i = 0;
+	old_cwd = getcwd(NULL, 0);
 	if (!prog->argv[1])
 	{
 		home = msh_env_get("HOME");
 		if (home)
 			i = chdir(home->def);
 		else
-			write(1, "bash: cd: HOME not set\n", 23);
+			write(1, "msh: cd: HOME not set\n", 23);
 	}
 	else
 		i = chdir(prog->argv[1]);
 	if (i)
-	{
-		write(1, "bash: cd: ", 10);
-		write(1, prog->argv[1], str_len(prog->argv[1]));
-		write(1, ": ", 2);
-		write(1, strerror(errno), str_len(strerror(errno)));
-		write(1, "\n", 1);
-	}
+		printf("msh: cd: %s: %s\n", prog->argv[1], strerror(errno));
 	else
-		change_directory_env();
+		change_directory_env(old_cwd);
 	return (1);
 }
