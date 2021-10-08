@@ -16,13 +16,26 @@ static t_token_type	handle_quote_type(t_token_type type)
 	return (type);
 }
 
+static void	join_word_tokens(t_llst *node, t_llst *n_next, t_token *token, t_token *t_next)
+{
+	char	*joined;
+
+	joined = str_join(token->data, t_next->data);
+	if (joined == NULL)
+		utils_exit(EXIT_FAILURE, NULL);
+	free(token->data);
+	token->data = joined;
+	token->type = TT_WORD;
+	node->next = n_next->next;
+	free_tokens(t_next, n_next);
+}
+
 void	msh_parser_weld_tokens(t_llst **tokens)
 {
 	t_llst	*node;
 	t_llst	*n_next;
 	t_token	*token;
 	t_token	*t_next;
-	char	*joined;
 
 	node = *tokens;
 	while (node && node->next)
@@ -33,16 +46,7 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		token->type = handle_quote_type(token->type);
 		t_next->type = handle_quote_type(t_next->type);
 		if (token->type == TT_WORD && t_next->type == TT_WORD)
-		{
-			joined = str_join(token->data, t_next->data);
-			if (joined == NULL)
-				utils_exit(EXIT_FAILURE, NULL);
-			free(token->data);
-			token->data = joined;
-			token->type = TT_WORD;
-			node->next = n_next->next;
-			free_tokens(t_next, n_next);
-		}
+			join_word_tokens(node, n_next, token, t_next);
 		else if (t_next->type == TT_SPCE)
 		{
 			node->next = n_next->next;
@@ -52,6 +56,5 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		else
 			node = node->next;
 	}
-	token = (t_token *)node->data;
-	token->type = handle_quote_type(token->type);
+	((t_token *)node->data)->type = handle_quote_type(token->type);
 }
