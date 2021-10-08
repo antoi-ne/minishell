@@ -8,12 +8,14 @@ static void	change_directory_env(void)
 	old_pwd = msh_env_get("OLDPWD");
 	pwd = msh_env_get("PWD");
 	if (old_pwd)
-		old_pwd->def = pwd->def;
-	if (pwd)
 	{
-		free(pwd->def);
-		pwd->def = getcwd(NULL, 0);
+		free(old_pwd->def);
+		old_pwd->def = pwd->def;
 	}
+	else if (pwd)
+		free(pwd->def);
+	if (pwd)
+		pwd->def = getcwd(NULL, 0);
 }
 
 int	msh_builtins_cd(t_prog *prog)
