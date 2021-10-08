@@ -18,9 +18,8 @@ static void	execute_builtin(t_llst *node, t_prog *prog)
 		utils_exit(EXIT_FAILURE, NULL);
 	else if (pid == 0)
 	{
-		if (dup2(prog->input, STDIN_FILENO) < 0)
-			exit(EXIT_FAILURE);
-		if (dup2(prog->output, STDOUT_FILENO) < 0)
+		if (dup2(prog->input, STDIN_FILENO) < 0
+			|| dup2(prog->output, STDOUT_FILENO) < 0)
 			exit(EXIT_FAILURE);
 		prog_close_fds(prog);
 		retval = msh_builtins_get(prog->argv[0])(prog);
@@ -53,8 +52,7 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 			|| dup2(prog->output, STDOUT_FILENO) < 0)
 			exit(EXIT_FAILURE);
 		prog_close_fds(prog);
-		retval = execve(cmd, prog->argv, msh_env_all());
-		exit (retval);
+		exit (execve(cmd, prog->argv, msh_env_all()));
 	}
 	else
 	{

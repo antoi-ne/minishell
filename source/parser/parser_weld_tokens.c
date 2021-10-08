@@ -9,14 +9,15 @@ static void	free_tokens(t_token *t_next, t_llst *n_next)
 	free(n_next);
 }
 
-static t_token_type	handle_quote_type(t_token_type type)
+static t_token_type	handle_quote_type(t_token *token)
 {
-	if (type == TT_DQS || type == TT_SQS)
+	if (token->type == TT_DQS || token->type == TT_SQS)
 		return (TT_WORD);
-	return (type);
+	return (token->type);
 }
 
-static void	join_word_tokens(t_llst *node, t_llst *n_next, t_token *token, t_token *t_next)
+static void	join_word_tokens(t_llst *node, t_llst *n_next,
+		t_token *token, t_token *t_next)
 {
 	char	*joined;
 
@@ -43,8 +44,8 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		token = (t_token *)node->data;
 		n_next = node->next;
 		t_next = (t_token *)n_next->data;
-		token->type = handle_quote_type(token->type);
-		t_next->type = handle_quote_type(t_next->type);
+		token->type = handle_quote_type(token);
+		t_next->type = handle_quote_type(t_next);
 		if (token->type == TT_WORD && t_next->type == TT_WORD)
 			join_word_tokens(node, n_next, token, t_next);
 		else if (t_next->type == TT_SPCE)
@@ -56,5 +57,5 @@ void	msh_parser_weld_tokens(t_llst **tokens)
 		else
 			node = node->next;
 	}
-	((t_token *)node->data)->type = handle_quote_type(token->type);
+	((t_token *)node->data)->type = handle_quote_type(((t_token *)node->data));
 }
