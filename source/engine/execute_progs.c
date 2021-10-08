@@ -48,6 +48,7 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 		utils_exit(EXIT_FAILURE, NULL);
 	else if (pid == 0)
 	{
+		signal(SIGQUIT, SIG_DFL);
 		if (dup2(prog->input, STDIN_FILENO) < 0
 			|| dup2(prog->output, STDOUT_FILENO) < 0)
 			exit(EXIT_FAILURE);
