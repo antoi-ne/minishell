@@ -23,8 +23,9 @@ char	**msh_env_all(void)
 				+ str_len(((t_env *)node->data)->def) + 2);
 		if (!envp[i])
 			utils_exit(EXIT_FAILURE, "memory allocation error");
-		sprintf(envp[i], "%s=%s", ((t_env *)node->data)->key,
-			((t_env *)node->data)->def);
+		str_cat(envp[i], ((t_env *)node->data)->key);
+		str_cat(envp[i], "=");
+		str_cat(envp[i], ((t_env *)node->data)->def);
 		node = node->next;
 		i++;
 	}
