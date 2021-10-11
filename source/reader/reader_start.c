@@ -46,14 +46,5 @@ void	msh_reader_start(int err)
 		llst_destroyl(&progs, (void (*)(void *)) & msh_parser_prog_free);
 		g_state.running_subprocess = 0;
 	}
-	printf("exit\n");
 	rl_clear_history();
 }
-
-/*
-** leak here (when ctrl-c while here-document)
-** because parsing is stopped before finishing and not cleared properly	
-** every data sets needed to apply the input line should be freed, 
-** the only section of data that should be keeped between the loop's iterations 
-** (the command history) is managed by add_history()
-*/

@@ -18,7 +18,6 @@
 typedef struct s_globalstate
 {
 	int		running_subprocess;
-	int		retval;
 	t_llst	*env;
 }	t_globalstate;
 

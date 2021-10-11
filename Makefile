@@ -9,7 +9,7 @@ RL_LIB		= /Users/maperrea/.brew/opt/readline/lib
 RL_INC		= /Users/maperrea/.brew/opt/readline/include
 endif
 
-CC			= gcc -g -fsanitize=address
+CC			= gcc -g #-fsanitize=address
 CFLAGS		= -Wall -Wextra -Werror -I $(RL_INC) -I libcarbon/include -I include
 RM			= rm -f
 

@@ -6,11 +6,12 @@
 #include <readline/readline.h>
 #include <errno.h>
 
-t_globalstate	g_state = {0, 0, NULL};
+t_globalstate	g_state = {0, NULL};
 
 void	sigint_handler(int sig)
 {
 	(void)sig;
+	msh_parser_set_retval(1);
 	write(1, "\n", 1);
 	if (g_state.running_subprocess == 0)
 	{
@@ -28,8 +29,6 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	msh_env_init(envp);
 	msh_reader_start(0);
+	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }
-/*
-**  msh_env_set("GAMING", "teststring");
-*/
