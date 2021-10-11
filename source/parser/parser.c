@@ -43,11 +43,17 @@ int	msh_parser(char *input, t_llst **progs)
 	tokens = NULL;
 	*progs = NULL;
 	if (msh_parser_tokenize(input, &tokens) != 0)
+	{
+		llst_destroyl(&tokens, (void (*)(void *)) & msh_parser_token_free);
 		return (-1);
+	}
 	msh_parser_expand(&tokens);
 	msh_parser_weld_tokens(&tokens);
 	if (msh_parser_lexer(&tokens, progs) != 0)
+	{
+		llst_destroyl(&tokens, (void (*)(void *)) & msh_parser_token_free);
 		return (-1);
+	}
 	llst_destroyl(&tokens, (void (*)(void *)) & msh_parser_token_free);
 	return (0);
 }

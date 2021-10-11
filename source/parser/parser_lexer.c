@@ -62,7 +62,11 @@ static int	process_node(t_lexer *lexer, t_llst **progs)
 	else if (lexer->c_token->type == TT_RERD)
 	{
 		if (msh_parser_redirection(lexer) != 0)
+		{
+			llst_destroyl(&copy, NULL);
+			free (lexer->c_prog);
 			return (-1);
+		}
 		lexer->c_node = lexer->c_node->next;
 	}
 	else if (lexer->c_token->type == TT_PIPE)
@@ -87,7 +91,10 @@ int	msh_parser_lexer(t_llst **tokens, t_llst **progs)
 		lexer.c_node = lexer.c_node->next;
 	}
 	if (llst_len(lexer.c_words) < 1)
+	{
+		free(lexer.c_prog);
 		return (utils_printerror(NULL, "syntax error: no command after pipe"));
+	}
 	finish_prog(&lexer, progs);
 	apply_pipes(progs);
 	return (0);
