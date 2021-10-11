@@ -13,7 +13,10 @@ static void	execute_builtin_nofork(t_prog *prog)
 	int		ret;
 
 	def = msh_builtins_get(prog->argv[0]);
-	ret = def(prog);
+	if (def == &msh_builtins_exit)
+		ret = msh_builtins_exit_nofork(prog);
+	else
+		ret = def(prog);
 	msh_parser_set_retval(ret);
 }
 

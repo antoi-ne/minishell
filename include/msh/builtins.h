@@ -14,5 +14,6 @@ int	msh_builtins_export(t_prog *prog);
 int	msh_builtins_unset(t_prog *prog);
 int	msh_builtins_env(t_prog *prog);
 int	msh_builtins_exit(t_prog *prog);
+int	msh_builtins_exit_nofork(t_prog *prog);
 
 #endif

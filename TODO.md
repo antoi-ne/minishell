@@ -1,6 +1,5 @@
 # TODO
 
-- print exit when calling exit outside pipe
 - manage += for export
 - leaks when parsing invalid
 
