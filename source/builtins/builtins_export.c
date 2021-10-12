@@ -63,35 +63,38 @@ static void	export_no_val(int min_val, t_llst *l)
 	}
 }
 
-static t_env	*extract_data(char *str)
+static int	extract_data(char *str, t_env *entry)
 {
-	t_env	*entry;
 	int		i;
+	char	*def;
 
-	entry = mem_calloc(sizeof(t_env));
-	if (!entry)
-		utils_exit(EXIT_FAILURE, NULL);
 	i = 0;
-	while (str[i] && str[i] != '=')
+	while (str[i] && (str[i] != '=' && str[i] != '+'))
 		i++;
 	if (str[i] == '\0')
-	{
-		free(entry);
-		return (NULL);
-	}
+		return (1);
+	if (i == 0 || (str[i] == '+' && str[i + 1] != '='))
+		return (printf("msh: export: %s: not a valid identifier", str));
 	entry->key = str_sub(str, 0, i);
 	if (!entry->key)
 		utils_exit(EXIT_FAILURE, NULL);
-	entry->def = str_sub(str, i + 1, str_len(str));
+	def = str_sub(str, i + 1 + (str[i] == '+'), str_len(str));
+	if (!def)
+		utils_exit(EXIT_FAILURE, NULL);
+	if (str[i] == '+')
+		entry->def = str_join(msh_env_get(entry->key), def);
+	else
+		entry->def = str_cpy(def);
+	free(def)
 	if (!entry->def)
 		utils_exit(EXIT_FAILURE, NULL);
-	return (entry);
+	return (0);
 }
 
 int	msh_builtins_export(t_prog *prog)
 {
 	int		i;
-	t_env	*entry;
+	t_env	entry;
 	t_llst	*l;
 
 	l = g_state.env;
@@ -102,13 +105,14 @@ int	msh_builtins_export(t_prog *prog)
 		i = 1;
 		while (prog->argv[i])
 		{
-			entry = extract_data(prog->argv[i]);
-			if (!entry)
-				return (0);
-			msh_env_set(entry->key, entry->def);
-			free(entry->key);
-			free(entry->def);
-			free(entry);
+			if (extract_data(prog->argv[i], &entry))
+			{
+				i++;
+				continue;
+			}
+			msh_env_set(entry.key, entry.def);
+			free(entry.key);
+			free(entry.def);
 			i++;
 		}
 	}
