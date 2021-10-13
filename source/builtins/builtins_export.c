@@ -74,7 +74,7 @@ static int	extract_data(char *str, t_env *entry)
 	if (str[i] == '\0')
 		return (1);
 	if (i == 0 || (str[i] == '+' && str[i + 1] != '='))
-		return (printf("msh: export: %s: not a valid identifier", str));
+		return (printf("msh: export: %s: not a valid identifier\n", str));
 	entry->key = str_sub(str, 0, i);
 	if (!entry->key)
 		utils_exit(EXIT_FAILURE, NULL);
@@ -82,10 +82,10 @@ static int	extract_data(char *str, t_env *entry)
 	if (!def)
 		utils_exit(EXIT_FAILURE, NULL);
 	if (str[i] == '+')
-		entry->def = str_join(msh_env_get(entry->key), def);
+		entry->def = str_join(msh_env_get(entry->key)->def, def);
 	else
-		entry->def = str_cpy(def);
-	free(def)
+		entry->def = str_dup(def);
+	free(def);
 	if (!entry->def)
 		utils_exit(EXIT_FAILURE, NULL);
 	return (0);

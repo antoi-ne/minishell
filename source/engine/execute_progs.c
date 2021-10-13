@@ -52,7 +52,7 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 			|| dup2(prog->output, STDOUT_FILENO) < 0)
 			exit(EXIT_FAILURE);
 		prog_close_fds(prog);
-		exit (execve(cmd, prog->argv, msh_env_all()));
+		exit(execve(cmd, prog->argv, msh_env_all()));
 	}
 	else
 	{
