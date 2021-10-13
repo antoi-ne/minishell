@@ -42,6 +42,12 @@ static void	finish_prog(t_lexer *lexer, t_llst **progs)
 	lexer->c_words = NULL;
 }
 
+static int	free_lexer(t_lexer *lexer)
+{
+	free (lexer->c_prog);
+	return (-1);
+}
+
 static int	process_node(t_lexer *lexer, t_llst **progs)
 {
 	t_llst	*copy;
@@ -62,11 +68,7 @@ static int	process_node(t_lexer *lexer, t_llst **progs)
 	else if (lexer->c_token->type == TT_RERD)
 	{
 		if (msh_parser_redirection(lexer) != 0)
-		{
-			llst_destroyl(&copy, NULL);
-			free (lexer->c_prog);
-			return (-1);
-		}
+			return (free_lexer(lexer));
 		lexer->c_node = lexer->c_node->next;
 	}
 	else if (lexer->c_token->type == TT_PIPE)
