@@ -6,7 +6,7 @@
 /*   By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:53:43 by alpeliss          #+#    #+#             */
-/*   Updated: 2021/10/13 16:09:09 by ancoulon         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:10:53 by ancoulon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	msh_builtins_exit_nofork(t_prog *prog)
 		exit(types_str2int(prog->argv[1]));
 	}
 	rl_clear_history();
-	llst_destroyl(&g_state.env, (void(*)(void *))&msh_env_free);
+	llst_destroyl(&g_state.env, (void (*)(void *)) & msh_env_free);
 	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:52:45 by alpeliss          #+#    #+#             */
-/*   Updated: 2021/10/13 16:07:38 by ancoulon         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:10:25 by ancoulon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,6 @@ int	main(int argc, char **argv, char **envp)
 	msh_env_init(envp);
 	msh_reader_start();
 	printf("exit\n");
-	llst_destroyl(&g_state.env, (void(*)(void *))&msh_env_free);
+	llst_destroyl(&g_state.env, (void (*)(void *)) & msh_env_free);
 	exit(EXIT_SUCCESS);
 }
