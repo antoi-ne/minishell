@@ -73,7 +73,6 @@ void	msh_parser_set_retval(int retval);
 
 int		msh_parser_get_retval(void);
 
-void	print_progs(t_llst *progs);
 t_prog	*init_prog(void);
 
 char	*msh_parser_expand_dqs(char *str, size_t i, size_t start);
