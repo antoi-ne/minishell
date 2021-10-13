@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_exit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alpeliss <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ancoulon <ancoulon@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:53:43 by alpeliss          #+#    #+#             */
-/*   Updated: 2021/10/13 15:53:44 by alpeliss         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:09:09 by ancoulon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <readline/readline.h>
+
+extern t_globalstate	g_state;
 
 int	msh_builtins_exit_nofork(t_prog *prog)
 {
@@ -39,6 +41,7 @@ int	msh_builtins_exit_nofork(t_prog *prog)
 		exit(types_str2int(prog->argv[1]));
 	}
 	rl_clear_history();
+	llst_destroyl(&g_state.env, (void(*)(void *))&msh_env_free);
 	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }
@@ -62,6 +65,5 @@ int	msh_builtins_exit(t_prog *prog)
 		rl_clear_history();
 		exit(types_str2int(prog->argv[1]));
 	}
-	rl_clear_history();
 	exit(EXIT_SUCCESS);
 }
