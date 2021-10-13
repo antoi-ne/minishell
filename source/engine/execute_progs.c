@@ -13,6 +13,7 @@ static void	execute_builtin(t_llst *node, t_prog *prog)
 	pid_t	pid;
 	int		retval;
 
+	(void)node;
 	pid = fork();
 	if (pid < 0)
 		utils_exit(EXIT_FAILURE, NULL);
@@ -29,11 +30,8 @@ static void	execute_builtin(t_llst *node, t_prog *prog)
 	else
 	{
 		prog_close_fds(prog);
-		if (node->next == NULL)
-		{
-			waitpid(pid, &retval, 0);
-			msh_parser_set_retval(WEXITSTATUS(retval));
-		}
+		waitpid(pid, &retval, 0);
+		msh_parser_set_retval(WEXITSTATUS(retval));
 	}
 }
 
@@ -42,6 +40,7 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 	pid_t	pid;
 	int		retval;
 
+	(void)node;
 	pid = fork();
 	if (pid < 0)
 		utils_exit(EXIT_FAILURE, NULL);
@@ -58,11 +57,8 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 	{
 		free(cmd);
 		prog_close_fds(prog);
-		if (node->next == NULL)
-		{
-			waitpid(pid, &retval, 0);
-			msh_parser_set_retval(WEXITSTATUS(retval));
-		}
+		waitpid(pid, &retval, 0);
+		msh_parser_set_retval(WEXITSTATUS(retval));
 	}
 }
 
