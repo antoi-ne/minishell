@@ -1,4 +1,5 @@
 #include "msh.h"
+#include <stdio.h>
 
 static void	prog_close_fds(t_prog *prog)
 {
@@ -37,6 +38,33 @@ static void	execute_builtin(t_llst *node, t_prog *prog)
 	}
 }
 
+static void	execute_builtin_recurse(t_prog *prog)
+{
+	pid_t	pid;
+	int		retval;
+
+	pid = fork();
+	if (pid < 0)
+		utils_exit(EXIT_FAILURE, NULL);
+	else if (pid == 0)
+	{
+		if (dup2(prog->input, STDIN_FILENO) < 0
+			|| dup2(prog->output, STDOUT_FILENO) < 0)
+			exit(EXIT_FAILURE);
+		prog_close_fds(prog);
+		retval = msh_builtins_get(prog->argv[0])(prog);
+		msh_parser_prog_free(prog);
+		exit(retval);
+	}
+	else
+	{
+		prog_close_fds(prog);
+		waitpid(pid, &retval, 0);
+	//	printf("prog done %s\n", prog->argv[0]);
+		msh_parser_set_retval(WEXITSTATUS(retval));
+	}
+}
+
 static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 {
 	pid_t	pid;
@@ -66,6 +94,77 @@ static void	execute_binary(t_llst *node, t_prog *prog, char *cmd)
 	}
 }
 
+static void	execute_binary_recurse(t_prog *prog, char *cmd)
+{
+	pid_t	pid;
+	int		retval;
+
+	pid = fork();
+	if (pid < 0)
+		utils_exit(EXIT_FAILURE, NULL);
+	else if (pid == 0)
+	{
+		signal(SIGQUIT, SIG_DFL);
+		if (dup2(prog->input, STDIN_FILENO) < 0
+			|| dup2(prog->output, STDOUT_FILENO) < 0)
+			exit(EXIT_FAILURE);
+		prog_close_fds(prog);
+		exit(execve(cmd, prog->argv, msh_env_all()));
+	}
+	else
+	{
+		free(cmd);
+		prog_close_fds(prog);
+		waitpid(pid, &retval, 0);
+		msh_parser_set_retval(WEXITSTATUS(retval));
+		printf("prog done %s\n", cmd);
+	}
+}
+
+static void	execute_recurse(t_llst *node)
+{
+	t_prog	*prog;
+	char	*cmd;
+	pid_t	pid;
+
+	if (!node)
+	{
+		//printf("end of list\n");
+		exit(0);
+	}
+	pid = fork();
+	if (pid < 0)
+		utils_exit(EXIT_FAILURE, NULL);
+	else if (pid == 0)
+	{
+		//printf("recurse @ %s\n", ((t_prog *)node->data)->argv[0]);
+		execute_recurse(node->next);
+		exit(0);
+	}
+	else
+	{
+		prog = (t_prog *)node->data;
+		//printf("start prog %s\n", prog->argv[0]);
+		if (msh_builtins_get(prog->argv[0]))
+			execute_builtin_recurse(prog);
+		else
+		{
+			cmd = msh_check_path(prog->argv[0], -1);
+			if (cmd)
+				execute_binary_recurse(prog, cmd);
+			else
+			{
+				utils_printerror(prog->argv[0], "command not found");
+				prog_close_fds(prog);
+				msh_parser_set_retval(127);
+				return ;
+			}
+		}
+		waitpid(pid, NULL, 0);
+		//printf("recurse finished @ %s\n", prog->argv[0]);
+	}
+}
+
 void	execute_all_progs(t_llst **progs)
 {
 	t_llst	*node;
@@ -73,6 +172,8 @@ void	execute_all_progs(t_llst **progs)
 	char	*cmd;
 
 	node = *progs;
+	execute_recurse(node);
+	return ;
 	while (node)
 	{
 		prog = (t_prog *)node->data;

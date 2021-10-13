@@ -16,7 +16,7 @@ endif
 
 
 CC			= gcc -g #-fsanitize=address
-CFLAGS		= -Wall -Wextra -Werror -I $(RL_INC) -I libcarbon/include -I include
+CFLAGS		= -I $(RL_INC) -I libcarbon/include -I include
 RM			= rm -f
 
 SRCDIR		= source
