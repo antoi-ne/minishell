@@ -81,7 +81,7 @@ static int	extract_data(char *str, t_env *entry)
 	def = str_sub(str, i + 1 + (str[i] == '+'), str_len(str));
 	if (!def)
 		utils_exit(EXIT_FAILURE, NULL);
-	if (str[i] == '+')
+	if (str[i] == '+' && msh_env_get(entry->key))
 		entry->def = str_join(msh_env_get(entry->key)->def, def);
 	else
 		entry->def = str_dup(def);
