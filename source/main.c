@@ -28,7 +28,7 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	msh_env_init(envp);
-	msh_reader_start(0);
+	msh_reader_start();
 	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }
