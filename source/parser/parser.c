@@ -22,20 +22,6 @@ void	msh_parser_prog_free(t_prog *prog)
 	free(prog);
 }
 
-void	print_tokens(t_llst	*tokens)
-{
-	t_llst	*node;
-	t_token	*token;
-
-	node = tokens;
-	while (node != NULL)
-	{
-		token = (t_token *)node->data;
-		printf("(%d) [%s]\n", token->type, token->data);
-		node = node->next;
-	}
-}
-
 int	msh_parser(char *input, t_llst **progs)
 {
 	t_llst	*tokens;
