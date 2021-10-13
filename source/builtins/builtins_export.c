@@ -108,7 +108,7 @@ int	msh_builtins_export(t_prog *prog)
 			if (extract_data(prog->argv[i], &entry))
 			{
 				i++;
-				continue;
+				continue ;
 			}
 			msh_env_set(entry.key, entry.def);
 			free(entry.key);
